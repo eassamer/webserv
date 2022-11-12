@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/08 14:12:57 by aer-razk         ###   ########.fr       */
+/*   Created: 2022/11/12 12:02:13 by aer-razk          #+#    #+#             */
+/*   Updated: 2022/11/12 12:50:42 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_HPP
-#define WEBSERV_HPP
+#ifndef INCLUDES_HPP
+#define INCLUDES_HPP
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -26,32 +26,18 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "routes.hpp"
-#define PORT 8005
+#include <vector>
+#include <map>
 
-class routes;
-
-class webserv
+class errors:public std::exception
 {
 	private:
-		int port;
-		std::string server_name;
-		std::string error_page;
-		int client_body_size;
-		std::string path;
-		routes *route;
+		 const char *	message;
 	public:
-		webserv();
-		~webserv();
-		void	set_port(int port);
-		void	set_server_name(std::string server_names);
-		void	set_error_page(std::string error_page);
-		void	set_client_body_size(int client_body_size);
-		void	set_path(std::string path);
-		std::string get_path();
-		void	port_accessed(int fd);
-		void	get_page(int c_fd ,std::string path);
-		std::string read_text(std::string path);
+		errors(const char * message):message(message){}
+		virtual const char * what() const throw()
+		{
+			return (this->message);
+		}
 };
-
 #endif

@@ -6,26 +6,27 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/08 14:12:29 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/12 14:22:14 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "headers/webserv.hpp"
-#include "headers/routes.hpp"
+#include "../headers/parser.hpp"
 
 
-void	port_accessed(int fd)
+/*void	port_accessed(int fd)
 {
 	char buffer[30000];
 	read(fd, buffer, 30000);
 	std::string sbuffer = buffer;
 	std::cout << sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" ")) << std::endl;
-}
+}*/
 
 int main(int arc, char **arv)
 {
+	/*std::time_t end_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	std::cout << "DO3AFAE 0.0.0 Development Server started at " << std::ctime(&end_time);
 	int s_fd, c_fd;
-	webserv doafae;
+	server doafae;
 	fd_set	server_fds, ready_fds;
 
 	struct sockaddr_in s_address;
@@ -86,16 +87,23 @@ int main(int arc, char **arv)
 				else
 				{
 					doafae.port_accessed(c_fd);
-					std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
-					if (doafae.get_path() == "/" || doafae.get_path() == "/index.html")
-						doafae.get_page(c_fd, "website/index.html");
-					else
-						doafae.get_page(c_fd, "website/error.html");
-					//write(c_fd , everything.c_str() , everything.length());
+					doafae.get_page(c_fd, doafae.get_path());
+					std::cout << "\033[1;33mserver [" << doafae.get_response_code() << "]: " << doafae.get_path() << "\033[0m\n" ;
 					FD_CLR(i, &server_fds);
-					std::cout << "\033[1;32mserver : connection closed\033[0m\n" ;
+					std::cout << "\033[1;32mserver : connection closed\033[0m\n";
 				}
 			}
 		}
+	}*/
+	try
+	{
+		parser mehdi;
+		mehdi.set_conf_path(arv[1]);
+		mehdi.fillncheck();
 	}
+	catch(std::exception &e)
+	{
+		std::cout << e.what();
+	}
+
 }
