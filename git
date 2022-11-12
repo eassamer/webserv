@@ -1,0 +1,24 @@
+#create branch
+    git branch branch_name
+
+#change the work to that branch
+    git checkout branch_name
+
+#create and change to a branch at the same time
+    git checkout -b branch_name
+
+#check in which branch are u:
+    git branch -a 
+
+#push to that branch
+    git add .
+    git commit -m ""
+    git push
+
+#delete a branch
+    git branch -d branch_name : if we've already merched branches
+    git branch -D branch_name : force delete
+
+#merge branch with the master branch
+    checkout to master 
+    git merge branch_name : branche name that we want to merge
