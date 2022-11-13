@@ -33,7 +33,7 @@ fclean : clean
 	@echo "$(GREEN)✔$(NC) Cleaned."
 
 run :
-	@make re && ./$(NAME) $(Arg)
+	@make re && ./$(NAME) $(arg)
 
 re : fclean all
 

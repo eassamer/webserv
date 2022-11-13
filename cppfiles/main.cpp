@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/12 14:22:14 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/13 10:36:18 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,13 @@ int main(int arc, char **arv)
 		parser mehdi;
 		mehdi.set_conf_path(arv[1]);
 		mehdi.fillncheck();
+		mehdi.checkspaces();
+		mehdi.checktabs();
+		mehdi.split_servers();
+		
 	}
 	catch(std::exception &e)
 	{
 		std::cout << e.what();
 	}
-
 }
