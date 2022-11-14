@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/13 14:48:09 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/14 14:50:54 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,11 +143,6 @@ parser::parser()
 
 parser::~parser(){}
 
-/*void	parser::check_args()
-{
-	std::string args[11] = {"listen", "root", "autoindex", "server_name", "error_page", "allowed_methods", "access_log", "cgiExt", "cgiPath", "location", "index"};
-
-}*/
 
 void parser::split_servers()
 {
@@ -180,4 +175,28 @@ void parser::split_servers()
 	{
 		servers[i].split_locations();
 	}
+}
+
+std::vector<std::string>	ft_split(std::string arg, char arc)
+{
+	std::vector<std::string> res;
+	int i = arg.length() - 1;
+	while (arg[i] == arc || arg[i] == '\t')
+		i--;
+	arg = arg.substr(0, i + 1);
+	i = 0;
+	while (arg[i] == arc || arg[i] == '\t')
+		i++;
+	arg = arg.substr(i, arg.length() - i);
+	i = arg.find(arc);
+	while (i < arg.length())
+	{	
+		res.push_back(arg.substr(0, i));
+		while (arg[i] == arc)
+			i++;
+		arg = arg.substr(i, arg.length() - i);
+		i = arg.find(arc);
+	}
+	res.push_back(arg);
+	return (res);
 }

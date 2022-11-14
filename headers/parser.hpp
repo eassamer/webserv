@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:01:22 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/13 14:48:46 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/14 09:22:59 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ class server;
 class parser
 {
 	private:
-		std::vector<server>			servers;
 		std::string					conf_path;
 		std::vector<std::string>	conf_content;
 	public:
+		std::vector<server>			servers;
 		//orthodox canonical class methods
 		parser();
 		~parser();
@@ -46,5 +46,7 @@ class parser
 		void	checkspaces();//it checks wheter there's two or more consecutive spaces!
 		void	checktabs();//it checks wheter there's extra or missing tab!
 };
+
+std::vector<std::string>	ft_split(std::string arg, char arc);
 
 #endif

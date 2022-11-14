@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/13 10:36:18 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/14 16:34:12 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,22 @@ int main(int arc, char **arv)
 	}*/
 	try
 	{
+		// server h;
+		// //h.checknsearch("hh");
+		// std::string karim = "	listen 0.0.0.0:4242;";
+		// ft_split(karim, ' ');
 		parser mehdi;
 		mehdi.set_conf_path(arv[1]);
 		mehdi.fillncheck();
 		mehdi.checkspaces();
 		mehdi.checktabs();
 		mehdi.split_servers();
-		
+		int i = -1;
+		mehdi.servers[0].set_port();
+		/*std::vector<std::string> a=mehdi.servers[0].checknsearch("listen");
+		int d = -1;
+		while (++d < a.size())
+			std::cout << a[d] << std::endl;*/
 	}
 	catch(std::exception &e)
 	{
