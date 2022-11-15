@@ -98,3 +98,62 @@ void    server::set_port()
 			throw errors("do3afa2:port not number in config file.");
 	this->port = std::stoi(splited[1]);
 }
+
+void server::set_server_name()
+{
+    std::vector<std::string> server_n = this->checknsearch("server_name");
+    this->server_name = server_n[0];
+}
+
+void server::set_root()
+{
+    std::vector<std::string> root_p = this->checknsearch("root");
+    this->root = root_p[0];
+}
+
+void server::set_autoindex()
+{
+    std::vector<std::string> autoindex_v = this->checknsearch("autoindex");
+    if (autoindex_v[0] == "on")
+        this->autoindex = true;
+    else if (autoindex_v[0] == "off")
+        this->autoindex = false;
+    else
+        throw errors("do3afa2:bad argument autoindex!");
+}
+
+void server::set_allow_methods()
+{
+    std::vector<std::string>    allow_methods_v = this->checknsearch("allow_methods");
+
+    for (int i = 0; i < allow_methods_v.size();i++)
+    {
+        if (allow_methods_v[i] == "GET")
+            this->allow_methods.push_back("GET");
+        else if (allow_methods_v[i] == "POST")
+            this->allow_methods.push_back("POST");
+        else if (allow_methods_v[i] == "DELETE")
+            this->allow_methods.push_back("DELETE");
+        else
+            throw errors("do3afa2:allow_methods bad arguments!");
+    }
+}
+
+void server::set_client_body_limit()
+{
+    std::vector<std::string>    client_body_limit_v = this->checknsearch("client_body_limit");
+    this->client_body_limit = atoi(client_body_limit_v[0].c_str());
+}
+
+void server::set_index()
+{
+    std::vector<std::string>    index_v = this->checknsearch("\tindex ");
+
+    for (int i = 0;i <index_v.size(); i++)
+    {
+        if (index_v[i].length() > index_v[i].find(".html"))
+            this->index.push_back(index_v[i]);
+        else
+            throw errors("do3afa2: bad file extension in index");
+    }
+}

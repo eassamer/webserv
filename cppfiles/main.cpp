@@ -109,6 +109,11 @@ int main(int arc, char **arv)
 		mehdi.split_servers();
 		int i = -1;
 		mehdi.servers[0].set_port();
+		mehdi.servers[0].set_server_name();
+		mehdi.servers[0].set_root();
+		mehdi.servers[0].set_allow_methods();
+		mehdi.servers[0].set_client_body_limit();
+		mehdi.servers[0].set_index();
 		/*std::vector<std::string> a=mehdi.servers[0].checknsearch("listen");
 		int d = -1;
 		while (++d < a.size())
