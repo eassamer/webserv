@@ -157,3 +157,15 @@ void server::set_index()
             throw errors("do3afa2: bad file extension in index");
     }
 }
+
+void server::set_error_page()
+{
+    std::vector<std::string>    error_page_v = this->checknsearch("error_page");
+
+    for (int i = 0;i < error_page_v[0].size();i++)
+    {
+        if (!isnumber(error_page_v[0][i]))
+            throw errors("do3afa2:error page number is wrong");
+    }
+    this->error_page.insert(std::pair<int,std::string>(std::stoi(error_page_v[0]),error_page_v[1]));
+}

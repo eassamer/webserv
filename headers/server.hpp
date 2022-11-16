@@ -21,15 +21,15 @@ class location;
 
 class server {
 	private:
-		int						port;
-		std::vector<std::string>			index;
-		std::string				server_name;
-		std::string				error_page;
-		std::string				root;
-		bool					autoindex;
-		int						client_body_limit;
-		std::string				path;
-		std::vector<std::string> allow_methods;
+		int							port;
+		std::vector<std::string>	index;
+		std::string					server_name;
+		std::map<int,std::string>	error_page;
+		std::string					root;
+		bool						autoindex;
+		int							client_body_limit;
+		std::string					path;
+		std::vector<std::string>	allow_methods;
 	public:
 		std::vector<location>		locations;
 		std::vector<std::string>	cont_server;
@@ -53,6 +53,7 @@ class server {
 		void	set_client_body_limit();
 		void	set_allow_methods();
 		void	set_index();
+		void	set_error_page();
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 		bool						check_brackets(std::string config);

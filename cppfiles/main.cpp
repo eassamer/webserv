@@ -114,6 +114,7 @@ int main(int arc, char **arv)
 		mehdi.servers[0].set_allow_methods();
 		mehdi.servers[0].set_client_body_limit();
 		mehdi.servers[0].set_index();
+		mehdi.servers[0].set_error_page();
 		/*std::vector<std::string> a=mehdi.servers[0].checknsearch("listen");
 		int d = -1;
 		while (++d < a.size())
