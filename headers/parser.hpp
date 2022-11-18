@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:01:22 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/14 09:22:59 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:12:57 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,6 @@ class parser
 		void	checktabs();//it checks wheter there's extra or missing tab!
 };
 
-std::vector<std::string>	ft_split(std::string arg, char arc);
+
 
 #endif

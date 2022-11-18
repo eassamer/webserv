@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:02:13 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/13 16:58:02 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:13:01 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,7 @@ class errors:public std::exception
 			return (this->message);
 		}
 };
+
+std::vector<std::string>	ft_split(std::string arg, char arc);
+
 #endif

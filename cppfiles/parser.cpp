@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/14 14:50:54 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/18 11:31:56 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void	parser::fillncheck()
 		throw errors("do3afa2:Config file dosen't exist.");
 	std::string line;
 	while (getline(fn, line))
-		conf_content.push_back(line);
+		if (count(line.begin(), line.end(), '#') == 0)
+			conf_content.push_back(line);
 	int i = -1;
 	int j = 0;
 	while (++i < conf_content.size())

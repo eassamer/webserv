@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:21 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/13 14:40:28 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:18:14 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,36 +16,29 @@
 
 class location
 {
-	private:
-		std::string	root;
-		std::string	index;
-		int			response_code;
-		std::string	method;
-		bool		autoindex;
-		std::string	cgi_path;
-		std::string	cgi_extension;
-		
-	public:
-		std::vector<std::string> cont_location;
-		//orthodox canonical class methods
-		location();
-		~location();
-		//getters
-		std::string	get_root(void);
-		std::string	get_index(void);
-		int			get_response_code();
-		std::string	get_method();
-		bool		get_autoindex();
-		std::string	get_cgi_path();
-		std::string	get_cgi_extension();
-		//setters
-		void	set_root(std::string root);
-		void	set_index(std::string index);
-		void	set_response_code(int response_code);
-		void	set_method(std::string method);
-		void	set_autoindex(bool autoindex);
-		void	set_cgi_path(std::string cgi_path);
-		void	set_cgi_extension(std::string cgi_extension);
+    private:
+        std::string    root;
+        std::vector<std::string> allow_methods;
+        std::string location_path;
+    public:
+        std::vector<std::string> cont_location;
+        //orthodox canonical class methods
+        location();
+        ~location();
+        //getters
+        std::string    get_root(void);
+		std::vector<std::string>	checknsearch(std::string var);
+        std::string    get_index(void);
+        int            get_response_code();
+        std::string    get_method();
+        bool        get_autoindex();
+        std::string    get_cgi_path();
+        std::string    get_cgi_extension();
+        //setters
+        void    set_location_path();
+        void    set_allow_methods();
+        void    set_root();
+        void    set_();
 };
 
 #endif
