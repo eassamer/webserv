@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/18 17:22:36 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/19 10:35:03 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,12 @@ int main(int arc, char **arv)
 		mehdi.servers[0].set_autoindex();
 		mehdi.servers[0].set_index();
 		mehdi.servers[0].set_error_page();
-		mehdi.servers[0].locations[1].set_location_path();
+		/*mehdi.servers[0].locations[1].set_location_path();
 		mehdi.servers[0].locations[1].set_root();
-		mehdi.servers[0].locations[1].set_allow_methods();
+		mehdi.servers[0].locations[1].set_allow_methods();*/
+		mehdi.servers[0].socketnmemset();
+		mehdi.servers[0].bindnlisten();
+		mehdi.servers[0].selectnaccept();
 		/*std::vector<std::string> a=mehdi.servers[0].checknsearch("listen");
 		int d = -1;
 		while (++d < a.size())
