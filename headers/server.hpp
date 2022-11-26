@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/19 10:45:37 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/26 10:43:12 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,18 @@ class server {
 		int							client_body_limit;
 		std::string					path;
 		std::vector<std::string>	allow_methods;
+		//user request
+	public:
+		std::vector<location>		locations;
+		std::vector<std::string>	cont_server;
 		int							s_fd;
 		int							c_fd;
 		fd_set						server_fds;
 		fd_set						ready_fds;
 		struct sockaddr_in 			s_address;
 		int 						sl_address;
-	public:
-		std::vector<location>		locations;
-		std::vector<std::string>	cont_server;
+		std::string					us_method;
+		std::string					us_path;
 		//orthodox canonical class methods
 		server();
 		~server();
@@ -49,11 +52,15 @@ class server {
 		bool					get_autoindex();
 		int						get_client_body_limit();
 		std::string				get_path();
+		std::string				getus_path();
+		std::string				getus_method();
 		std::string				get_index();
 		std::vector<location>	get_locations();
 		//setters
 		void	set_port();
 		void	set_server_name();
+		void	setus_path(std::string path);
+		void	setus_method(std::string method);
 		void	set_root();
 		void	set_autoindex();
 		void	set_client_body_limit();
@@ -63,17 +70,16 @@ class server {
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 		bool						check_brackets(std::string config);
-		std::string					port_accessed(int fd);
+		void						port_accessed(int fd);
 		std::string					search_file(std::string path);
-		void						get_page(int c_fd ,std::string path);
+		void						get_page(int c_fd, std::string path);
 		std::string					read_text(std::string path);
 		//parsers
 		void	split_locations(); // split locations and store it inside locations
 		//setup server
-		void	manageports(int c_fd, std::string path_accessed);
+		void	manageports(int c_fd, std::string path_accessed, std::string method);
 		void	socketnmemset();
 		void	bindnlisten();
-		void	selectnaccept();
 };
 
 #endif

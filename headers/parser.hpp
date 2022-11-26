@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:01:22 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/18 17:12:57 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/26 11:37:26 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class parser
 	private:
 		std::string					conf_path;
 		std::vector<std::string>	conf_content;
+		fd_set						ready_fds, server_fds;
 	public:
 		std::vector<server>			servers;
 		//orthodox canonical class methods
@@ -45,6 +46,10 @@ class parser
 		void	fillncheck(); //it checks wheter there's an open bracket without being closed!
 		void	checkspaces();//it checks wheter there's two or more consecutive spaces!
 		void	checktabs();//it checks wheter there's extra or missing tab!
+		//server
+		void	selectnaccept();
+		//join fd_sets
+		void	FD_JOIN(fd_set fds);
 };
 
 

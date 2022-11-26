@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/18 17:22:20 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/22 16:57:42 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ void location::set_root()
 {
     std::vector<std::string> root_p = this->checknsearch("root");
     this->root = root_p[0];
-	std::cout << this->root << "\n";
 }
 
 void location::set_location_path()
@@ -123,4 +122,14 @@ void location::set_location_path()
 
     this->location_path = splits[0];
     std::cout << this->location_path << "\n";
+}
+
+std::string location::get_location_path(void)
+{
+	return (this->location_path);
+}
+
+std::string location::get_root(void)
+{
+	return (this->root);
 }

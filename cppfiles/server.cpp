@@ -14,7 +14,6 @@
 
 server::server()
 {
-
 }
 
 server::~server()
@@ -174,6 +173,7 @@ void server::set_error_page()
 {
 	std::vector<std::string>    error_page_v = this->checknsearch("error_page");
 
+	this->error_page.insert(std::pair<int,std::string>(405, "./default/405.html"));
 	if (error_page_v[0].size() == 0)
 		throw errors("do3afa2:error page number is wrong");
 	for (int i = 0;i < error_page_v[0].size();i++)
@@ -208,9 +208,9 @@ void	server::socketnmemset()
 void	server::bindnlisten()
 {
 	if (bind(s_fd, (struct sockaddr *)&s_address, sizeof(s_address)) < 0)
-		throw errors("do3afa2:bind:couldn't bind socket with address");
+		throw errors("do3afa2:port is already taken.");
 	//MARKING SOCKET AS PASSIVE 'ABLE TO ACCEPTE INCOMING CONNECTIONS' AND MAKING A QUEUE OF CONNECTION REQUESTS TO BE EXTRACTED USING ACCEPT
-	if (listen(s_fd, 10) < 0)
+	if (listen(s_fd, 100) < 0)
 		throw errors("do3afa2:listen:couldn't make the queue on the socket");
 	//SETTING FD_SET
 	FD_ZERO(&server_fds);
@@ -218,44 +218,16 @@ void	server::bindnlisten()
 	std::cout << "\033[1;32m" << server_name << " listening on port : " << port << "\033[0m\n" ;
 }
 
-void	server::selectnaccept()
-{
-	while (1)
-	{
-		//SAVING THE FD SET THAT WILL BE SENT TO SELECT CUZ SELECT IS DISTRUCTIVE
-		ready_fds = server_fds;
-		if (select(FD_SETSIZE, &ready_fds, NULL, NULL, NULL) < 0)
-			throw errors("do3afa2:select:couldn't select from the fdset");
-		for (int i = 0; i < FD_SETSIZE; i++)
-		{
-			if (FD_ISSET(i, &ready_fds))
-			{
-				if (i == s_fd)
-				{
-					std::cout << "\033[1;32mserver : connection request\033[0m\n" ;
-					c_fd = accept(s_fd, (struct sockaddr *)&s_address, (socklen_t*)&sl_address);
-					if (c_fd < 0)
-						throw errors("do3afa2:accept: couldn't accept request on port");
-					FD_SET(c_fd, &server_fds);
-				}
-				else
-				{
-					manageports(c_fd, port_accessed(c_fd));
-					//write(c_fd , everything.c_str() , everything.length());
-					FD_CLR(i, &server_fds);
-					std::cout << "\033[1;32mserver : connection closed\033[0m\n" ;
-				}
-			}
-		}
-	}
-}
 
-std::string	server::port_accessed(int fd)
+
+void	server::port_accessed(int fd)
 {
 	char buffer[30000];
-	read(fd, buffer, 30000);
+	std::cout << read(fd, buffer, 30000) << std::endl;
 	std::string sbuffer = buffer;
-	return sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
+	std::cout << buffer << std::endl;
+	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
+	us_method = sbuffer.substr(0, sbuffer.find(" "));
 }
 
 int		server::get_port()
@@ -270,7 +242,7 @@ std::string	server::get_server_name()
 
 std::string	server::get_error_page(int status)
 {
-	std::cout << "\033[1;33mserver : response [status : " << status << " OK]\033[0m\n" ;
+	std::cout << "\033[1;33mserver : response [status : " << status << " KO]\033[0m\n" ;
 	return error_page[status];
 }
 
@@ -316,20 +288,38 @@ std::string server::read_text(std::string path)
 	std::string text;
 	std::string buffer;
 	std::ifstream	fn(path);
-
+	if (!fn)
+		throw errors("do3afa2:invalid path from config file.");
 	while(getline(fn, buffer))
 		text += buffer;
 	return (text);
 }
 
-
-void	server::manageports(int c_fd, std::string path_accessed)
+void	server::manageports(int c_fd, std::string path_accessed, std::string method)
 {
-	if (path_accessed == "/")
+	int i = -1;
+	while (++i < allow_methods.size())
+		if (allow_methods[i] == method)
+			break ;
+	if (i < allow_methods.size())
 	{
-		get_page(c_fd, get_root() + get_index());
-		std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
+		if (path_accessed == "/")
+		{
+			get_page(c_fd, get_root() + "/" + get_index());
+			std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
+		}
+		else
+		{
+			int i = -1;
+			while (++i < locations.size())
+				if (locations[i].get_location_path() == path_accessed)
+					break ;
+			if (i < locations.size())
+				get_page(c_fd, root + locations[i].get_location_path() + "/" + locations[i].get_root());
+			else
+				get_page(c_fd, get_error_page(404));
+		}
 	}
 	else
-		get_page(c_fd, get_error_page(404));
+		get_page(c_fd, get_error_page(405));
 }

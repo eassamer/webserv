@@ -29,7 +29,6 @@ clean :
 
 fclean : clean
 	@rm -f fobjs/*.o
-	@rm -r .vscode
 	@rm -f cppfiles/*.o
 	@echo "$(GREEN)✔$(NC) Cleaned."
 
