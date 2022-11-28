@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/26 11:43:43 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/28 10:38:33 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@ int main(int arc, char **arv)
 			mehdi.servers[i].set_autoindex();
 			mehdi.servers[i].set_index();
 			mehdi.servers[i].set_error_page();
+			int j = -1;
+			while (++j < mehdi.servers[i].locations.size())
+			{
+				mehdi.servers[i].locations[j].set_root();
+				mehdi.servers[i].locations[j].set_allow_methods();
+				mehdi.servers[i].locations[j].set_index();
+				mehdi.servers[i].locations[j].set_location_path();
+			}
 			mehdi.servers[i].socketnmemset();
 			mehdi.servers[i].bindnlisten();
 		}

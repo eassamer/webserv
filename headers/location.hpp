@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:21 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/22 16:52:41 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/28 10:13:52 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class location
         std::string    root;
         std::vector<std::string> allow_methods;
         std::string location_path;
+        std::string index;
     public:
         std::vector<std::string> cont_location;
         //orthodox canonical class methods
@@ -37,7 +38,7 @@ class location
         void    set_location_path();
         void    set_allow_methods();
         void    set_root();
-        void    set_();
+        void    set_index();
         //methods
 		std::vector<std::string>	checknsearch(std::string var);
 };

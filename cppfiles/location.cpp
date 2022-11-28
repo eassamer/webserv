@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/22 16:57:42 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/28 10:40:47 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ std::vector<std::string>	location::checknsearch(std::string var)
 	lst["cgi_extension"] = 1;
 	lst["auto_index"] = 1;
 	lst["path"] = 1;
-    lst["index "] = 2;
+    lst["index"] = 1;
 	std::vector<std::string> splits;
 	if (var == "location")
 	{
@@ -65,7 +65,7 @@ std::vector<std::string>	location::checknsearch(std::string var)
 	}
 	for(int i = 0; i < cont_location.size(); i++)
     {
-        if (cont_location[i].find(var) < cont_location[i].length() && cont_location[i].find(var) == 2)
+        if (cont_location[i].find(var) == 2)
         {
 			splits = ft_split(cont_location[i], ' ');
             if (splits.size() > lst[var] + 1 && splits[splits.size() - 1] != ";")
@@ -106,8 +106,6 @@ void location::set_allow_methods()
         else
             throw errors("do3afa2:allow_methods bad arguments!");
     }
-	for (int i = 0; i < this->allow_methods.size();i++)
-		std::cout << this->allow_methods[i] << "\n";
 }
 
 void location::set_root()
@@ -121,7 +119,12 @@ void location::set_location_path()
     std::vector<std::string> splits = this->checknsearch("location");;
 
     this->location_path = splits[0];
-    std::cout << this->location_path << "\n";
+}
+
+void location::set_index()
+{
+	std::vector<std::string> index_p = this->checknsearch("index");
+	this->index = index_p[0];
 }
 
 std::string location::get_location_path(void)
@@ -132,4 +135,9 @@ std::string location::get_location_path(void)
 std::string location::get_root(void)
 {
 	return (this->root);
+}
+
+std::string location::get_index(void)
+{
+	return (this->index);
 }

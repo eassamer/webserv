@@ -62,7 +62,7 @@ std::vector<std::string>    server::checknsearch(std::string var)
 	std::vector<std::string> splits;
 	for(int i = 0; i < cont_server.size(); i++)
 	{
-		if (cont_server[i].find(var) < cont_server[i].length() && cont_server[i].find(var) == 1)
+		if (cont_server[i].find(var) == 1)
 		{
 			splits = ft_split(cont_server[i], ' ');
 			if ((splits.size() > lst[var] + 1 && splits[splits.size() - 1] != ";") || (splits.size() == 1))
@@ -160,7 +160,7 @@ void server::set_client_body_limit()
 void server::set_index()
 {
 	std::vector<std::string>    index_v = this->checknsearch("index");
-	for (int i = 0;i <index_v.size(); i++)
+	for (int i = 0;i < index_v.size(); i++)
 	{
 		if (index_v[i].length() > 5 &&  index_v[i].find(".html") == index_v[i].length() - 5)
 			this->index.push_back(index_v[i]);
@@ -223,9 +223,9 @@ void	server::bindnlisten()
 void	server::port_accessed(int fd)
 {
 	char buffer[30000];
-	std::cout << read(fd, buffer, 30000) << std::endl;
+	read(fd, buffer, 30000);
 	std::string sbuffer = buffer;
-	std::cout << buffer << std::endl;
+	//std::cout << buffer << std::endl;
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
 }
@@ -315,7 +315,10 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 				if (locations[i].get_location_path() == path_accessed)
 					break ;
 			if (i < locations.size())
-				get_page(c_fd, root + locations[i].get_location_path() + "/" + locations[i].get_root());
+			{
+				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index());
+				std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
+			}
 			else
 				get_page(c_fd, get_error_page(404));
 		}

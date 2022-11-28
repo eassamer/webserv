@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/26 18:29:44 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/28 10:07:58 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ void	parser::selectnaccept()
 		int i = -1;
 		while (++i < servers.size())
 		{
-			FD_JOIN(servers[i].server_fds);
+			FD_JOIN(servers[i].server_fds);//JOINING THE FD SETS OF ALL SERVERS
 			servers[i].ready_fds = servers[i].server_fds;
 		}
 		ready_fds = server_fds;
@@ -237,7 +237,7 @@ void	parser::selectnaccept()
 				{
 					if (i == servers[j].s_fd)
 					{
-						std::cout << "\033[1;32mserver : connection request\033[0m\n" ;
+						std::cout << "\033[1;32mserver : connection request :" << servers[j].us_path << "|port:" << servers[j].get_port() << "\033[0m\n" ;
 						servers[j].c_fd = accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address);
 						if (servers[j].c_fd < 0)
 							throw errors("do3afa2:accept: couldn't accept request on port");
