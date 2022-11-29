@@ -218,14 +218,56 @@ void	server::bindnlisten()
 	std::cout << "\033[1;32m" << server_name << " listening on port : " << port << "\033[0m\n" ;
 }
 
-
-
 void	server::port_accessed(int fd)
 {
 	char buffer[30000];
-	read(fd, buffer, 30000);
-	std::string sbuffer = buffer;
-	//std::cout << buffer << std::endl;
+	int i;
+	std::vector<std::string>    request_v;
+	int j = 0;
+	memset(buffer, 0, 30000);
+	std::string buffer1, sbuffer;
+	while ((i = read(fd, buffer, 29999)) > 0)
+	{
+		buffer1 = buffer;
+		sbuffer.append(buffer, i);
+		if (buffer1.find("Content-Type") > buffer1.length() && buffer[i - 1] == '\n')
+			break ;
+		j++;
+		if (j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
+			break ;
+	}
+	//std::cout << sbuffer << std::endl;
+	if (j > 1)
+	{
+		std::string boundray = "--" + sbuffer.substr(sbuffer.find("boundary=") + 9, sbuffer.substr(sbuffer.find("boundary=") + 9).find("\r\n") - 1);
+		std::string file = sbuffer.substr(sbuffer.find(boundray));
+		int k = 0;
+		std::string counter;
+		counter = file;
+		while (k < counter.length())
+		{
+			k = counter.find(boundray) + boundray.length() + 1;
+			if (k > counter.length())
+				break ;
+			request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
+			counter = counter.substr(k);
+		}
+		k = -1;
+		while (++k < request_v.size())
+		{
+			if (request_v[k].find("filename=") > request_v[k].length())
+				request_v.erase(request_v.begin() + k);
+			else
+			{
+				std::string filename = request_v[k].substr(request_v[k].find("filename=") + 10, request_v[k].substr(request_v[k].find("filename=") + 10).find("\r\n") - 1);
+				std::ofstream fnr( "./uploads/" + filename);
+				std::string content = request_v[k].substr(request_v[k].find("Content-Type:"));
+				std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
+				fnr << content2;
+				fnr.close();
+			}
+		}
+	}
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
 }
