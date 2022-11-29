@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:21 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 10:13:52 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/28 19:49:14 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ class location
         std::vector<std::string> allow_methods;
         std::string location_path;
         std::string index;
+		std::string cgi_path;
+		std::string cgi_extension;
     public:
         std::vector<std::string> cont_location;
         //orthodox canonical class methods
@@ -32,8 +34,8 @@ class location
 		std::string	get_index(void);
 		std::string	get_method();
 		bool		get_autoindex();
-       /* std::string	get_cgi_path();
-        std::string	get_cgi_extension();*/
+        std::string	get_cgi_path();
+        std::string	get_cgi_extension();
         //setters
         void    set_location_path();
         void    set_allow_methods();

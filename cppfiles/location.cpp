@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 10:40:47 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:54:40 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,4 +140,10 @@ std::string location::get_root(void)
 std::string location::get_index(void)
 {
 	return (this->index);
+}
+
+std::string location::get_cgi_path()
+{
+	this->cgi_path = "../website/test.php";
+	return this->cgi_path;
 }

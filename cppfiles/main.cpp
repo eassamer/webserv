@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 10:38:33 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/29 14:16:52 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.hpp"
+#include "../cgi_test/cgi.hpp"
 
 int main(int arc, char **arv)
 {
@@ -40,6 +41,8 @@ int main(int arc, char **arv)
 				mehdi.servers[i].locations[j].set_allow_methods();
 				mehdi.servers[i].locations[j].set_index();
 				mehdi.servers[i].locations[j].set_location_path();
+				Cgi ibra(mehdi.servers[i], mehdi.servers[i].locations[i]);
+				ibra.execute_cgi();
 			}
 			mehdi.servers[i].socketnmemset();
 			mehdi.servers[i].bindnlisten();

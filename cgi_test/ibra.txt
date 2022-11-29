@@ -1,0 +1,54 @@
+GATEWAY_INTERFACE=CGI/1.1
+HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+HTTP_ACCEPT_ENCODING=gzip, deflate
+HTTP_ACCEPT_LANGUAGE=en-US,en;q=0.5
+HTTP_CONNECTION=keep-alive
+HTTP_HOST=localhost:8000
+HTTP_SEC_FETCH_DEST=document
+HTTP_SEC_FETCH_MODE=navigate
+HTTP_SEC_FETCH_SITE=none
+HTTP_SEC_FETCH_USER=?1
+HTTP_UPGRADE_INSECURE_REQUESTS=1
+HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:94.0) Gecko/20100101 Firefox/94.0
+PATH_INFO=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/index.php
+PATH_TRANSLATED=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/index.php
+QUERY_STRING=
+REDIRECT_STATUS=200
+REMOTE_ADDR=.
+REQUEST_METHOD=GET
+REQUEST_URI=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/index.php
+SCRIPT_NAME=/Users/bboulhan/Desktop/projects/kk/cgi-bin/php-cgi
+SERVER_NAME=0.0.0.0
+SERVER_PORT=8000
+SERVER_PROTOCOL=HTTP/1.1
+SERVER_SOFTWARE=WEBSERV/1.0
+
+
+
+//-------------------------------------------------------------------------------------------------------//
+
+
+GATEWAY_INTERFACE=CGI/1.1
+HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+HTTP_ACCEPT_ENCODING=gzip, deflate
+HTTP_ACCEPT_LANGUAGE=en-US,en;q=0.5
+HTTP_CONNECTION=keep-alive
+HTTP_HOST=localhost:8000
+HTTP_SEC_FETCH_DEST=document
+HTTP_SEC_FETCH_MODE=navigate
+HTTP_SEC_FETCH_SITE=none
+HTTP_SEC_FETCH_USER=?1
+HTTP_UPGRADE_INSECURE_REQUESTS=1
+HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:94.0) Gecko/20100101 Firefox/94.0
+PATH_INFO=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/cc.php
+PATH_TRANSLATED=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/cc.php
+QUERY_STRING=
+REDIRECT_STATUS=200
+REMOTE_ADDR=.
+REQUEST_METHOD=GET
+REQUEST_URI=/Users/bboulhan/Desktop/projects/kk/www/cgi-bin/cc.php
+SCRIPT_NAME=/Users/bboulhan/Desktop/projects/kk/cgi-bin/php-cgi
+SERVER_NAME=0.0.0.0
+SERVER_PORT=8000
+SERVER_PROTOCOL=HTTP/1.1
+SERVER_SOFTWARE=WEBSERV/1.0

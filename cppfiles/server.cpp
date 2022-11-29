@@ -303,7 +303,12 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			break ;
 	if (i < allow_methods.size())
 	{
-		if (path_accessed == "/")
+		if (path_accessed == "/upload.php")
+		{
+			std::cout << path_accessed << std::endl;
+			get_page(c_fd, "./website/upload.php");
+		}
+		else if (path_accessed == "/")
 		{
 			get_page(c_fd, get_root() + "/" + get_index());
 			std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
