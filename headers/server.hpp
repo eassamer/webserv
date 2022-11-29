@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/26 10:43:12 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/29 14:38:37 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,12 @@ class server {
 		//parsers
 		void	split_locations(); // split locations and store it inside locations
 		//setup server
-		void	manageports(int c_fd, std::string path_accessed, std::string method);
-		void	socketnmemset();
-		void	bindnlisten();
+		void		manageports(int c_fd, std::string path_accessed, std::string method);
+		void		socketnmemset();
+		void		bindnlisten();
+		bool 		check_header(int fd);
+		std::string	read_request(int fd, int *j);
+		void 		uploadfiles(std::string sbuffer);
 };
 
 #endif

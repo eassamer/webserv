@@ -6,11 +6,12 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 10:07:58 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/29 14:31:31 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.hpp"
+#include "../headers/includes.hpp"
 
 void	parser::fillncheck()
 {
@@ -241,13 +242,15 @@ void	parser::selectnaccept()
 						servers[j].c_fd = accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address);
 						if (servers[j].c_fd < 0)
 							throw errors("do3afa2:accept: couldn't accept request on port");
-						FD_SET(servers[j]. c_fd, &servers[j].server_fds);
+						FD_SET(servers[j].c_fd, &servers[j].server_fds);
 					}
 					else
 					{
+						if (check_header(servers[j].c_fd));
 						servers[j].port_accessed(servers[j].c_fd);
 						servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
 						FD_CLR(i, &servers[j].server_fds);
+						FD_CLR(i, &server_fds);
 						std::cout << "\033[1;32mserver : connection closed\033[0m\n" ;
 					}
 					break ;
@@ -257,4 +260,9 @@ void	parser::selectnaccept()
 				break ;
 		}
 	}
+}
+
+bool check_header(int fd)
+{
+	
 }
