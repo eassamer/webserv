@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/29 14:31:31 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/11/30 09:14:23 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,6 @@ void	parser::selectnaccept()
 					}
 					else
 					{
-						if (check_header(servers[j].c_fd));
 						servers[j].port_accessed(servers[j].c_fd);
 						servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
 						FD_CLR(i, &servers[j].server_fds);

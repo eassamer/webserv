@@ -276,6 +276,7 @@ void	server::port_accessed(int fd)
 	std::string sbuffer = read_request(fd, &j);
 	if (j > 1)
 		uploadfiles(sbuffer);
+	std::cout << sbuffer << std::endl;
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
 }
