@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/30 09:14:23 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/01 09:36:25 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,10 @@ void	parser::selectnaccept()
 			servers[i].ready_fds = servers[i].server_fds;
 		}
 		ready_fds = server_fds;
+		std::cout << "bselect" << std::endl;
 		if (select(FD_SETSIZE, &ready_fds, NULL, NULL, NULL) < 0)
 			throw errors("do3afa2:select:couldn't select from the fdset");
+		std::cout << "aselect" << std::endl;
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
 			int j = -1;
@@ -239,17 +241,19 @@ void	parser::selectnaccept()
 					if (i == servers[j].s_fd)
 					{
 						std::cout << "\033[1;32mserver : connection request :" << servers[j].us_path << "|port:" << servers[j].get_port() << "\033[0m\n" ;
-						servers[j].c_fd = accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address);
-						if (servers[j].c_fd < 0)
+						servers[j].c_fd.push_back(accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address));
+						if (servers[j].c_fd[0] < 0)
 							throw errors("do3afa2:accept: couldn't accept request on port");
-						FD_SET(servers[j].c_fd, &servers[j].server_fds);
+						FD_SET(servers[j].c_fd[0], &servers[j].server_fds);
 					}
 					else
 					{
-						servers[j].port_accessed(servers[j].c_fd);
-						servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
-						FD_CLR(i, &servers[j].server_fds);
-						FD_CLR(i, &server_fds);
+						servers[j].port_accessed(servers[j].c_fd[0]);
+						servers[j].manageports(servers[j].c_fd[0], servers[j].us_path, servers[j].us_method);
+						FD_CLR(servers[j].c_fd[0], &servers[j].server_fds);
+						FD_CLR(servers[j].c_fd[0], &server_fds);
+						close(servers[j].c_fd[0]);
+						servers[j].c_fd.erase(servers[j].c_fd.begin());
 						std::cout << "\033[1;32mserver : connection closed\033[0m\n" ;
 					}
 					break ;
@@ -261,7 +265,7 @@ void	parser::selectnaccept()
 	}
 }
 
-bool check_header(int fd)
+/*bool check_header(int fd)
 {
 	
-}
+}*/
