@@ -215,7 +215,7 @@ void	server::bindnlisten()
 	//SETTING FD_SET
 	FD_ZERO(&server_fds);
 	FD_SET(s_fd, &server_fds);
-	std::cout << "\033[1;32m" << server_name << " listening on port : " << port << "\033[0m\n" ;
+	std::cout << "\033[1;32m" << server_name << " : listening on port : " << port << "\033[0m\n" ;
 }
 
 std::string server::read_request(int fd, int *j)
@@ -273,12 +273,14 @@ void	server::uploadfiles(std::string sbuffer)
 void	server::port_accessed(int fd)
 {
 	int j = 0;
-	std::string sbuffer = read_request(fd, &j);
+	static std::string sbuffer;
+	sbuffer = read_request(fd, &j);
 	if (j > 1)
 		uploadfiles(sbuffer);
-	std::cout << sbuffer << std::endl;
+	//std::cout << sbuffer << std::endl;
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
+	//sbuffer[fd].erase(0, sbuffer[fd].find("\r\n\r\n") + 4);
 }
 
 int		server::get_port()
@@ -293,7 +295,6 @@ std::string	server::get_server_name()
 
 std::string	server::get_error_page(int status)
 {
-	std::cout << "\033[1;33mserver : response [status : " << status << " KO]\033[0m\n" ;
 	return error_page[status];
 }
 
@@ -322,9 +323,54 @@ std::string server::get_path()
 	return path;
 }
 
-void	server::get_page(int c_fd ,std::string path)
+void	server::get_page(int c_fd ,std::string path, int status)
 {
-	std::string http = "HTTP/1.1 200 OK\n";
+	std::map<int, std::string> status_map;
+	status_map[200] = "200 OK";
+	status_map[201] = "201 Created";
+	status_map[202] = "202 Accepted";
+	status_map[204] = "204 No Content";
+	status_map[301] = "301 Moved Permanently";
+	status_map[302] = "302 Found";
+	status_map[304] = "304 Not Modified";
+	status_map[400] = "400 Bad Request";
+	status_map[401] = "401 Unauthorized";
+	status_map[403] = "403 Forbidden";
+	status_map[404] = "404 Not Found";
+	status_map[405] = "405 Method Not Allowed";
+	status_map[406] = "406 Not Acceptable";
+	status_map[408] = "408 Request Timeout";
+	status_map[409] = "409 Conflict";
+	status_map[410] = "410 Gone";
+	status_map[411] = "411 Length Required";
+	status_map[413] = "413 Payload Too Large";
+	status_map[414] = "414 URI Too Long";
+	status_map[415] = "415 Unsupported Media Type";
+	status_map[416] = "416 Range Not Satisfiable";
+	status_map[417] = "417 Expectation Failed";
+	status_map[418] = "418 I'm a teapot";
+	status_map[421] = "421 Misdirected Request";
+	status_map[422] = "422 Unprocessable Entity";
+	status_map[423] = "423 Locked";
+	status_map[424] = "424 Failed Dependency";
+	status_map[426] = "426 Upgrade Required";
+	status_map[428] = "428 Precondition Required";
+	status_map[429] = "429 Too Many Requests";
+	status_map[431] = "431 Request Header Fields Too Large";
+	status_map[451] = "451 Unavailable For Legal Reasons";
+	status_map[500] = "500 Internal Server Error";
+	status_map[501] = "501 Not Implemented";
+	status_map[502] = "502 Bad Gateway";
+	status_map[503] = "503 Service Unavailable";
+	status_map[504] = "504 Gateway Timeout";
+	status_map[505] = "505 HTTP Version Not Supported";
+	status_map[506] = "506 Variant Also Negotiates";
+	status_map[507] = "507 Insufficient Storage";
+	status_map[508] = "508 Loop Detected";
+	status_map[510] = "510 Not Extended";
+	status_map[511] = "511 Network Authentication Required";
+
+	std::string http = "HTTP/1.1 " + status_map[status] + "\n";
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
 	std::string text = read_text(path);
@@ -332,6 +378,7 @@ void	server::get_page(int c_fd ,std::string path)
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
+	std::cout << "\033[1;33m" << server_name << " : response [status : " + status_map[status] + "]\033[0m\n" ;
 }
 
 std::string server::read_text(std::string path)
@@ -354,11 +401,8 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			break ;
 	if (i < allow_methods.size())
 	{
-		if (path_accessed == "/")
-		{
-			get_page(c_fd, get_root() + "/" + get_index());
-			std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
-		}
+		if (path_accessed == "/" || path_accessed == "")
+			get_page(c_fd, get_root() + "/" + get_index(), 200);
 		else
 		{
 			int i = -1;
@@ -366,14 +410,11 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 				if (locations[i].get_location_path() == path_accessed)
 					break ;
 			if (i < locations.size())
-			{
-				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index());
-				std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
-			}
+				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
 			else
-				get_page(c_fd, get_error_page(404));
+				get_page(c_fd, get_error_page(404), 404);
 		}
 	}
 	else
-		get_page(c_fd, get_error_page(405));
+		get_page(c_fd, get_error_page(405), 405);
 }

@@ -33,10 +33,12 @@ clean :
 fclean : clean
 	@rm -f fobjs/*.o
 	@rm -f cppfiles/*.o
+	@rm -rf ./uploads/*
 	@echo "$(GREEN)✔$(NC) Cleaned."
 
 run :
 	@rm -rf ./uploads/*
+	@./default/replacer
 	@make re && ./$(NAME) $(arg)
 
 re : fclean all
