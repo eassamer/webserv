@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/29 13:54:40 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/01 13:18:27 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,12 @@ std::vector<std::string>	location::checknsearch(std::string var)
             break ;
         }
     }
-	if (splits.size() == 0)
+	/*if (splits.size() == 0)
 	{
 		char echo[30000];
 		std::sprintf(echo ,"do3afa2:%s:lack of tag.", var.c_str());
 		throw errors(echo);
-	}
+	}*/
 	if (splits[splits.size() - 1][splits[splits.size() - 1].length() - 1] != ';')
 		throw errors("do3afa2a:tag is not closed 'missing ;'");     
 	splits[splits.size() - 1] = splits[splits.size() - 1].substr(0, splits[splits.size() - 1].length() - 1);
@@ -144,6 +144,10 @@ std::string location::get_index(void)
 
 std::string location::get_cgi_path()
 {
-	this->cgi_path = "../website/test.php";
 	return this->cgi_path;
+}
+
+std::string location::get_cgi_extension()
+{
+	return this->cgi_extension;
 }

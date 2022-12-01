@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:21 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 19:49:14 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/01 13:18:39 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ class location
         std::vector<std::string> allow_methods;
         std::string location_path;
         std::string index;
-		std::string cgi_path;
 		std::string cgi_extension;
-    public:
+	
+	public:
+		std::string cgi_path;
         std::vector<std::string> cont_location;
         //orthodox canonical class methods
         location();
@@ -41,6 +42,8 @@ class location
         void    set_allow_methods();
         void    set_root();
         void    set_index();
+		void	set_cgi_extension();
+		void	set_cgi_path();
         //methods
 		std::vector<std::string>	checknsearch(std::string var);
 };

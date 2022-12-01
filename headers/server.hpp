@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/26 10:43:12 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/01 12:51:09 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 #include "includes.hpp"
 #include "location.hpp"
 #include "parser.hpp"
+#include "../cgi_test/cgi.hpp"
 
 class location;
+class Cgi;
 
 class server {
 	private:
@@ -74,6 +76,8 @@ class server {
 		std::string					search_file(std::string path);
 		void						get_page(int c_fd, std::string path);
 		std::string					read_text(std::string path);
+		void 						get_page_cgi(int c_fd ,std::string path, location &local);
+
 		//parsers
 		void	split_locations(); // split locations and store it inside locations
 		//setup server

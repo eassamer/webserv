@@ -218,14 +218,56 @@ void	server::bindnlisten()
 	std::cout << "\033[1;32m" << server_name << " listening on port : " << port << "\033[0m\n" ;
 }
 
-
-
 void	server::port_accessed(int fd)
 {
 	char buffer[30000];
-	read(fd, buffer, 30000);
-	std::string sbuffer = buffer;
-	//std::cout << buffer << std::endl;
+	int i;
+	std::vector<std::string>    request_v;
+	int j = 0;
+	memset(buffer, 0, 30000);
+	std::string buffer1, sbuffer;
+	while ((i = read(fd, buffer, 29999)) > 0)
+	{
+		buffer1 = buffer;
+		sbuffer.append(buffer, i);
+		if (buffer1.find("Content-Type") > buffer1.length() && buffer[i - 1] == '\n')
+			break ;
+		j++;
+		if (j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
+			break ;
+	}
+	//std::cout << sbuffer << std::endl;
+	if (j > 1)
+	{
+		std::string boundray = "--" + sbuffer.substr(sbuffer.find("boundary=") + 9, sbuffer.substr(sbuffer.find("boundary=") + 9).find("\r\n") - 1);
+		std::string file = sbuffer.substr(sbuffer.find(boundray));
+		int k = 0;
+		std::string counter;
+		counter = file;
+		while (k < counter.length())
+		{
+			k = counter.find(boundray) + boundray.length() + 1;
+			if (k > counter.length())
+				break ;
+			request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
+			counter = counter.substr(k);
+		}
+		k = -1;
+		while (++k < request_v.size())
+		{
+			if (request_v[k].find("filename=") > request_v[k].length())
+				request_v.erase(request_v.begin() + k);
+			else
+			{
+				std::string filename = request_v[k].substr(request_v[k].find("filename=") + 10, request_v[k].substr(request_v[k].find("filename=") + 10).find("\r\n") - 1);
+				std::ofstream fnr( "./uploads/" + filename);
+				std::string content = request_v[k].substr(request_v[k].find("Content-Type:"));
+				std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
+				fnr << content2;
+				fnr.close();
+			}
+		}
+	}
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
 }
@@ -277,7 +319,27 @@ void	server::get_page(int c_fd ,std::string path)
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
 	std::string text = read_text(path);
+	l_content += std::to_string(text.length()) + "\n\n";
+	std::string everything = http + t_content + l_content + text;
+	write(c_fd , everything.c_str() , everything.length());
+}
 
+void	server::get_page_cgi(int c_fd ,std::string path, location &local)
+{
+	std::string http = "HTTP/1.1 200 OK\n";
+	std::string t_content = "Content-Type: text/html\n";
+	std::string l_content = "Content-Length:";
+	std::string text;
+	location b = local;
+	b.cgi_path = path;
+	Cgi ab(this, &b);
+	ab.execute_cgi();
+	std::string buffer;
+	int fd = fileno(ab.fdOut);
+	char *a = (char *)calloc(2, 1);
+	while (read(fd, a, 1))
+		text += a[0];
+	std::cout << "*-*-*" << text << std::endl;
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
@@ -301,14 +363,10 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 	while (++i < allow_methods.size())
 		if (allow_methods[i] == method)
 			break ;
+	
 	if (i < allow_methods.size())
 	{
-		if (path_accessed == "/upload.php")
-		{
-			std::cout << path_accessed << std::endl;
-			get_page(c_fd, "./website/upload.php");
-		}
-		else if (path_accessed == "/")
+		if (path_accessed == "/")
 		{
 			get_page(c_fd, get_root() + "/" + get_index());
 			std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
@@ -321,8 +379,16 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 					break ;
 			if (i < locations.size())
 			{
+				std::string str = locations[i].get_location_path();
+				std::cout << str << "\n";
+				if (str.find("cgi", 0) < str.size())
+				{
+					get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i]);
+				}
+				else{
 				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index());
 				std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
+				}
 			}
 			else
 				get_page(c_fd, get_error_page(404));

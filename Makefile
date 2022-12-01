@@ -15,6 +15,9 @@ HEADERS = headers/*.hpp
 
 OBJS = $(FILES:.cpp=.o)
 
+dir:
+	@mkdir fobjs uploads
+
 all: $(NAME)
 	@echo "$(GREEN)✔$(NC) Compiled."
 	@mv cppfiles/*.o fobjs
@@ -31,10 +34,12 @@ clean :
 fclean : clean
 	@rm -f fobjs/*.o
 	@rm -f cppfiles/*.o
+	@rm -rf ./uploads/*
 	@echo "$(GREEN)✔$(NC) Cleaned."
 
 run :
+	@rm -rf ./uploads/*
+	@./default/replacer
 	@make re && ./$(NAME) $(arg)
 
 re : fclean all
-
