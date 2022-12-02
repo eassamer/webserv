@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 11:13:33 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:24:36 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	parser::fillncheck()
 		throw errors("do3afa2:Config file dosen't exist.");
 	std::string line;
 	while (getline(fn, line))
-	{		
+	{
 		if (line.find('#') > line.size())
 			conf_content.push_back(line);
 		else
@@ -246,12 +246,14 @@ void	parser::selectnaccept()
 					}
 					else
 					{
-						servers[j].port_accessed(servers[j].c_fd);
-						servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
-						FD_CLR(servers[j].c_fd, &servers[j].server_fds);
-						FD_CLR(servers[j].c_fd, &server_fds);
-						close(servers[j].c_fd);
-						std::cout << "\033[1;32m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
+						if (servers[j].port_accessed(servers[j].c_fd) == 1)
+						{
+							servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
+							FD_CLR(servers[j].c_fd, &servers[j].server_fds);
+							FD_CLR(servers[j].c_fd, &server_fds);
+							close(servers[j].c_fd);
+							std::cout << "\033[1;32m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
+						}
 					}
 					break ;
 				}

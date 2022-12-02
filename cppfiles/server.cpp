@@ -1,16 +1,16 @@
-	/* ************************************************************************** */
-	/*                                                                            */
-	/*                                                        :::      ::::::::   */
-	/*   server.cpp                                         :+:      :+:    :+:   */
-	/*                                                    +:+ +:+         +:+     */
-	/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
-	/*                                                +#+#+#+#+#+   +#+           */
-	/*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-	/*   Updated: 2022/11/18 15:50:10 by aer-razk         ###   ########.fr       */
-	/*                                                                            */
-	/* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
+/*   Updated: 2022/12/02 14:47:38 by aer-razk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-	#include "../headers/server.hpp"
+#include "../headers/server.hpp"
 
 server::server()
 {
@@ -215,7 +215,48 @@ void	server::bindnlisten()
 	//SETTING FD_SET
 	FD_ZERO(&server_fds);
 	FD_SET(s_fd, &server_fds);
-	std::cout << "\033[1;32m" << server_name << " : listening on port : " << port << "\033[0m\n" ;
+	//std::cout << "\033[1;32m" << server_name << " : listening on port : 127.0.0.1:" << port << "\033[0m\n" ;
+	std::cout << "\033[1;32m" << server_name << " : listening on port : " << IPADDRESS << ":" << port << "\033[0m\n" ; //gonna be deleted
+}
+
+int	server::check_request(std::string buff)
+{
+	if (buff.find("GET") && buff.find("POST") && buff.find("DELETE"))
+		return (0);
+	if (buff.find("Content-Length:") > buff.length() && buff.find("POST") < buff.length())
+		return (0);
+		
+	std::cout << "f\n";
+	std::vector<std::string> arr= ft_split(buff,'\n');
+	std::vector<std::string> tmp;
+	for (int i = 0; i < arr.size();i++)
+	{
+		tmp = ft_split(arr[i],' ');
+		if (i == 0 && tmp[2] == "HTTP/1.1\n")
+		{
+			if (tmp.size() != 3)
+				return 0;
+			if (tmp[0] == "GET" || tmp[0] == "POST" || tmp[0] == "DELETE")
+				return 0;
+		}
+		if (tmp[0] == "Host:")
+		{
+			if (tmp.size() != 2)
+				return 0;
+			std::vector<std::string> a = ft_split(tmp[1],':');
+			if (this->port != std::stoi(a[1]))
+				return 0;
+		}
+		if (tmp[0] == "Content-Length:")
+		{
+			int len = 0;
+			std::string boundray = "--" + buff.substr(buff.find("boundary=") + 9, buff.substr(buff.find("boundary=") + 9).find("\r\n") - 1);
+			if ( (int)buff.size() - buff.find(boundray) != std::stoi(tmp[1]))
+				return 0;
+		}
+		
+	}
+	return (1);
 }
 
 std::string server::read_request(int fd, int *j)
@@ -270,16 +311,19 @@ void	server::uploadfiles(std::string sbuffer)
 	}
 }
 
-void	server::port_accessed(int fd)
+int	server::port_accessed(int fd)
 {
 	int j = 0;
 	static std::string sbuffer;
 	sbuffer = read_request(fd, &j);
+	if (check_request(sbuffer) == 0) 
+		return 0;
 	if (j > 1)
 		uploadfiles(sbuffer);
 	//std::cout << sbuffer << std::endl;
 	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
 	us_method = sbuffer.substr(0, sbuffer.find(" "));
+	return 1;
 	//sbuffer[fd].erase(0, sbuffer[fd].find("\r\n\r\n") + 4);
 }
 

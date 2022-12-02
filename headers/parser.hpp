@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:01:22 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 10:09:21 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:25:22 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,5 @@ class parser
 		//join fd_sets
 		void						FD_JOIN(fd_set fds);
 };
-
-
 
 #endif

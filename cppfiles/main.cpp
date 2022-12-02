@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 09:34:56 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 12:31:11 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int main(int arc, char **arv)
 		while (++i < mehdi.servers.size())
 		{
 			mehdi.servers[i].set_port();
+			mehdi.servers[i].IPADDRESS = arv[2];//gonna be deleted
 			mehdi.servers[i].set_server_name();
 			mehdi.servers[i].set_root();
 			mehdi.servers[i].set_allow_methods();

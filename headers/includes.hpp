@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:02:13 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 10:08:51 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:34:18 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@
 #include	<vector>
 #include	<map>
 #include	<cstring>
+
 class errors:public std::exception
 {
 	private:
-		 const char *	message;
+		const char *	message;
 	public:
 		errors(const char * message):message(message){}
 		virtual const char * what() const throw()

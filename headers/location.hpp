@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:21 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 10:09:07 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:34:11 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class location
 		std::string					index;
 		std::string					cgi_handler;
 	public:
-		std::vector<std::string> cont_location;
+		std::vector<std::string>	cont_location;
 		//orthodox canonical class methods
 		location();
 		~location();
@@ -43,5 +43,4 @@ class location
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 };
-
 #endif

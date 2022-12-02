@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 11:11:49 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/02 14:34:02 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class server {
 		std::vector<std::string>	allow_methods;
 		//user request
 	public:
+		std::string					IPADDRESS;//gonna be deleted
 		std::vector<location>		locations;
 		std::vector<std::string>	cont_server;
 		int							s_fd;
@@ -70,7 +71,7 @@ class server {
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 		bool						check_brackets(std::string config);
-		void						port_accessed(int fd);
+		int							port_accessed(int fd);
 		std::string					search_file(std::string path);
 		void						get_page(int c_fd, std::string path, int status);
 		std::string					read_text(std::string path);
@@ -82,7 +83,7 @@ class server {
 		void						bindnlisten();
 		bool 						check_header(int fd);
 		std::string					read_request(int fd, int *j);
+		int							check_request(std::string buff);
 		void 						uploadfiles(std::string sbuffer);
 };
-
 #endif
