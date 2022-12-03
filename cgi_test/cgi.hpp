@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/19 16:13:02 by bboulhan          #+#    #+#             */
-/*   Updated: 2022/12/01 12:51:42 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/03 15:47:27 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "../headers/server.hpp"
 #include "../headers/location.hpp"
 #include <stdlib.h>
+#include <unistd.h>
 
 class server;
 
@@ -29,6 +30,7 @@ class Cgi{
 		char **c_env;
 		location *loc;
 		server *serv;
+		// std::map<std::string , char **arg > tools;
 		
 	public:
 		Cgi();

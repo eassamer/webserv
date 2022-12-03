@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/19 16:13:04 by bboulhan          #+#    #+#             */
-/*   Updated: 2022/12/01 13:49:36 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/03 16:49:24 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,7 @@ void Cgi::execute_cgi()
 
 	env_init();
 	convert_env();
-	//std::cout << "hey\n";
-	print_table(this->c_env);
+	// print_table(this->c_env);
 	fd_in = dup(STDIN_FILENO);
 	fd_out = dup(STDOUT_FILENO);
 	
@@ -134,17 +133,21 @@ void Cgi::execute_cgi()
 	}	
 	else if (pid == 0)
 	{
-		std::cout << "hey\n";
-		std::cout << this->loc->get_cgi_path() << "\n";
-		/*dup2(fdCgi_in, STDIN_FILENO);
-		dup2(fdCgi_out, STDOUT_FILENO);*/
-		execve(("python3" + this->loc->get_cgi_path()).c_str(), NULL, this->c_env);
+		dup2(fdCgi_in, STDIN_FILENO);
+		dup2(fdCgi_out, STDOUT_FILENO);
+		char **arg = new char *[3];
+		arg[0] = strdup("/usr/local/bin/python3");
+		arg[1] = strdup("./website/test.py");
+		// arg[0] = strdup("/usr/bin/php");
+		// arg[1] = strdup("./website/test.php");
+		arg[2] = NULL;
+		execve(arg[0], arg, this->c_env);
 		std::cout << "Error\n";
 		write(STDOUT_FILENO, "Status: 500\r\n\r\n", 15);
 	}
 	else
 	{
-		waitpid(-1, NULL, 0);
+		waitpid(pid, NULL, 0);
 		lseek(fdCgi_out, 0, SEEK_SET);
 	}
 	

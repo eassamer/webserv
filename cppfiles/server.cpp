@@ -339,7 +339,7 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local)
 	char *a = (char *)calloc(2, 1);
 	while (read(fd, a, 1))
 		text += a[0];
-	std::cout << "*-*-*" << text << std::endl;
+	// std::cout << "*-*-*" << text << std::endl;
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
@@ -380,7 +380,6 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			if (i < locations.size())
 			{
 				std::string str = locations[i].get_location_path();
-				std::cout << str << "\n";
 				if (str.find("cgi", 0) < str.size())
 				{
 					get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i]);
