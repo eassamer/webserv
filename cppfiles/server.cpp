@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/02 14:47:38 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 14:44:39 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ void	server::bindnlisten()
 	if (bind(s_fd, (struct sockaddr *)&s_address, sizeof(s_address)) < 0)
 		throw errors("do3afa2:port is already taken.");
 	//MARKING SOCKET AS PASSIVE 'ABLE TO ACCEPTE INCOMING CONNECTIONS' AND MAKING A QUEUE OF CONNECTION REQUESTS TO BE EXTRACTED USING ACCEPT
-	if (listen(s_fd, 100) < 0)
+	if (listen(s_fd, 500) < 0)
 		throw errors("do3afa2:listen:couldn't make the queue on the socket");
 	//SETTING FD_SET
 	FD_ZERO(&server_fds);
@@ -221,41 +221,31 @@ void	server::bindnlisten()
 
 int	server::check_request(std::string buff)
 {
-	if (buff.find("GET") && buff.find("POST") && buff.find("DELETE"))
-		return (0);
-	if (buff.find("Content-Length:") > buff.length() && buff.find("POST") < buff.length())
-		return (0);
-		
-	std::cout << "f\n";
-	std::vector<std::string> arr= ft_split(buff,'\n');
+	int j = 0;
+	std::vector<std::string> arr = ft_split(buff,'\n');
+	int size = arr.size() - 1;
 	std::vector<std::string> tmp;
+	if (arr[0].length() > 1 && buff.find("GET") > buff.length() && buff.find("DELETE") > buff.length() && buff.find("POST") > buff.length())
+		return (400);
 	for (int i = 0; i < arr.size();i++)
 	{
 		tmp = ft_split(arr[i],' ');
-		if (i == 0 && tmp[2] == "HTTP/1.1\n")
+		if (i == 0 && i != size)
+			if ((tmp.size() != 3) || (tmp[2] != "HTTP/1.1\r" && tmp[2] != "HTTP/1.0\r"))
+				return (400);
+		if (i == size)
 		{
-			if (tmp.size() != 3)
-				return 0;
-			if (tmp[0] == "GET" || tmp[0] == "POST" || tmp[0] == "DELETE")
-				return 0;
+			if (size == 0)
+			{
+				std::cout << buff << std::endl;
+				return (0);
+			}
+			if (arr[size].length() == 1 && arr[size][0] == '\r')
+				break;
 		}
-		if (tmp[0] == "Host:")
-		{
-			if (tmp.size() != 2)
-				return 0;
-			std::vector<std::string> a = ft_split(tmp[1],':');
-			if (this->port != std::stoi(a[1]))
-				return 0;
-		}
-		if (tmp[0] == "Content-Length:")
-		{
-			int len = 0;
-			std::string boundray = "--" + buff.substr(buff.find("boundary=") + 9, buff.substr(buff.find("boundary=") + 9).find("\r\n") - 1);
-			if ( (int)buff.size() - buff.find(boundray) != std::stoi(tmp[1]))
-				return 0;
-		}
-		
 	}
+	if (buff.find("POST") < buff.length() && buff.find("Content-Length:") > buff.length())
+		return (411);
 	return (1);
 }
 
@@ -293,6 +283,7 @@ void	server::uploadfiles(std::string sbuffer)
 			break ;
 		request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
 		counter = counter.substr(k);
+		std::cout << "hey\n";
 	}
 	k = -1;
 	while (++k < request_v.size())
@@ -314,17 +305,23 @@ void	server::uploadfiles(std::string sbuffer)
 int	server::port_accessed(int fd)
 {
 	int j = 0;
-	static std::string sbuffer;
-	sbuffer = read_request(fd, &j);
-	if (check_request(sbuffer) == 0) 
-		return 0;
+	int stat;
+	static std::string sbuffer[FD_SETSIZE];
+	sbuffer[fd] += read_request(fd, &j);
+	//std::cout << sbuffer[fd] << std::endl;
+	if ((stat = check_request(sbuffer[fd])) != 1)
+	{
+		if (stat != 0)
+			sbuffer[fd].clear();
+		return (stat);
+	}
 	if (j > 1)
-		uploadfiles(sbuffer);
-	//std::cout << sbuffer << std::endl;
-	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
-	us_method = sbuffer.substr(0, sbuffer.find(" "));
-	return 1;
-	//sbuffer[fd].erase(0, sbuffer[fd].find("\r\n\r\n") + 4);
+		uploadfiles(sbuffer[fd]);
+	us_path = sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].length()).find(" "));
+	us_method = sbuffer[fd].substr(0, sbuffer[fd].find(" "));
+	//std::cout << sbuffer[fd] << std::endl;
+	sbuffer[fd].clear();
+	return (1);
 }
 
 int		server::get_port()

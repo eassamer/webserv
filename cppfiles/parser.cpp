@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/02 14:24:36 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 14:41:50 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,28 +238,35 @@ void	parser::selectnaccept()
 				{
 					if (i == servers[j].s_fd)
 					{
-						servers[j].c_fd = accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address);
-						if (servers[j].c_fd < 0)
+						servers[j].c_fd.push_back(accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address));
+						if (servers[j].c_fd[servers[j].c_fd.size() - 1] < 0)
 							throw errors("do3afa2:accept: couldn't accept request on port");
 						std::cout << "\033[1;32m" << servers[j].get_server_name() << " : connection requested port : " << servers[j].get_port() << "\033[0m\n" ;
-						FD_SET(servers[j].c_fd, &servers[j].server_fds);
+						FD_SET(servers[j].c_fd[servers[j].c_fd.size() - 1], &servers[j].server_fds);
 					}
 					else
 					{
-						if (servers[j].port_accessed(servers[j].c_fd) == 1)
+						int pos;
+						int d = -1;
+						while (++d < servers[j].c_fd.size())
+							if (i == servers[j].c_fd[d])
+								break ;
+						if ((pos = servers[j].port_accessed(servers[j].c_fd[d])) != 0)
 						{
-							servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
-							FD_CLR(servers[j].c_fd, &servers[j].server_fds);
-							FD_CLR(servers[j].c_fd, &server_fds);
-							close(servers[j].c_fd);
-							std::cout << "\033[1;32m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
-						}
+							if (pos == 1)
+								servers[j].manageports(servers[j].c_fd[d], servers[j].us_path, servers[j].us_method);
+							else
+								servers[j].get_page(servers[j].c_fd[d], servers[j].get_error_page(404), pos);
+							FD_CLR(servers[j].c_fd[d], &servers[j].server_fds);
+							FD_CLR(servers[j].c_fd[d], &servers[j].ready_fds);
+							FD_CLR(servers[j].c_fd[d], &server_fds);
+							close(servers[j].c_fd[d]);
+							servers[j].c_fd.erase(servers[j].c_fd.begin() + d);
+							std::cout << "\033[1;31m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
+						}	
 					}
-					break ;
 				}
 			}
-			if (j < servers.size())
-				break ;
 		}
 	}
 }

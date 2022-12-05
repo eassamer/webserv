@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/02 14:34:02 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 14:37:13 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class server {
 		std::vector<location>		locations;
 		std::vector<std::string>	cont_server;
 		int							s_fd;
-		int							c_fd;
+		std::vector<int>			c_fd;
 		fd_set						server_fds;
 		fd_set						ready_fds;
 		struct sockaddr_in 			s_address;
