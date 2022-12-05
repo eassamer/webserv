@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 14:41:50 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:42:42 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,14 +255,14 @@ void	parser::selectnaccept()
 						{
 							if (pos == 1)
 								servers[j].manageports(servers[j].c_fd[d], servers[j].us_path, servers[j].us_method);
-							else
+							else if (pos != -1)
 								servers[j].get_page(servers[j].c_fd[d], servers[j].get_error_page(404), pos);
 							FD_CLR(servers[j].c_fd[d], &servers[j].server_fds);
 							FD_CLR(servers[j].c_fd[d], &servers[j].ready_fds);
 							FD_CLR(servers[j].c_fd[d], &server_fds);
 							close(servers[j].c_fd[d]);
 							servers[j].c_fd.erase(servers[j].c_fd.begin() + d);
-							std::cout << "\033[1;31m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
+							std::cout << "\033[1;31m" << servers[j].get_server_name() << " : connection closed on port :" << servers[j].get_port() << "\033[0m\n" ;
 						}	
 					}
 				}

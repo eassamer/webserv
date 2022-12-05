@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 14:37:13 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:20:59 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ class server {
 		void						bindnlisten();
 		bool 						check_header(int fd);
 		std::string					read_request(int fd, int *j);
-		int							check_request(std::string buff);
+		int							check_request(std::string &buff);
 		void 						uploadfiles(std::string sbuffer);
 };
 #endif

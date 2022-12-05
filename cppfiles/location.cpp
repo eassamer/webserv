@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/02 14:42:30 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:57:50 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ std::vector<std::string>	location::checknsearch(std::string var)
 			break ;
 		}
 	}
-	/*if (splits.size() == 0)
+	if (splits.size() == 0)
 	{
 		char echo[30000];
 		std::sprintf(echo ,"do3afa2:%s:lack of tag.", var.c_str());
 		throw errors(echo);
-	}*/
+	}
 	if (splits[splits.size() - 1][splits[splits.size() - 1].length() - 1] != ';')
 		throw errors("do3afa2a:tag is not closed 'missing ;'");     
 	splits[splits.size() - 1] = splits[splits.size() - 1].substr(0, splits[splits.size() - 1].length() - 1);

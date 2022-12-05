@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 14:44:39 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:09:25 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,12 +219,13 @@ void	server::bindnlisten()
 	std::cout << "\033[1;32m" << server_name << " : listening on port : " << IPADDRESS << ":" << port << "\033[0m\n" ; //gonna be deleted
 }
 
-int	server::check_request(std::string buff)
+int	server::check_request(std::string &buff)
 {
-	int j = 0;
 	std::vector<std::string> arr = ft_split(buff,'\n');
 	int size = arr.size() - 1;
 	std::vector<std::string> tmp;
+	if (buff == "\r\n")
+		return (buff.clear() ,0);
 	if (arr[0].length() > 1 && buff.find("GET") > buff.length() && buff.find("DELETE") > buff.length() && buff.find("POST") > buff.length())
 		return (400);
 	for (int i = 0; i < arr.size();i++)
@@ -236,26 +237,35 @@ int	server::check_request(std::string buff)
 		if (i == size)
 		{
 			if (size == 0)
-			{
-				std::cout << buff << std::endl;
 				return (0);
-			}
 			if (arr[size].length() == 1 && arr[size][0] == '\r')
 				break;
 		}
 	}
 	if (buff.find("POST") < buff.length() && buff.find("Content-Length:") > buff.length())
 		return (411);
+	if (buff.find("boundary=") < buff.length())
+	{
+		std::string boundray = "--" + buff.substr(buff.find("boundary=") + 9, buff.substr(buff.find("boundary=") + 9).find("\r\n") - 1);
+		std::string files = buff.substr(buff.find(boundray));
+		std::string contentl = buff.substr(buff.find("Content-Length:") + 16, buff.substr(buff.find("Content-Length:") + 16).find("\r\n"));
+		int i = -1;
+		while (++i < contentl.length())
+			if (!isnumber(contentl[i]))
+				return (400);
+		if (files.length() != std::stoi(contentl))
+			return (0);
+	}
 	return (1);
 }
 
 std::string server::read_request(int fd, int *j)
 {
-	char buffer[30000];
+	char buffer[30000000];
 	int i;
-	memset(buffer, 0, 30000);
+	memset(buffer, 0, 30000000);
 	std::string buffer1, sbuffer;
-	while ((i = read(fd, buffer, 29999)) > 0)
+	while ((i = read(fd, buffer, 30000000)) > 0)
 	{
 		buffer1 = buffer;
 		sbuffer.append(buffer, i);
@@ -265,6 +275,8 @@ std::string server::read_request(int fd, int *j)
 		if (*j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
 			break ;
 	}
+	if (i < 0)
+		sbuffer.clear();
 	return (sbuffer);
 }
 
@@ -283,7 +295,6 @@ void	server::uploadfiles(std::string sbuffer)
 			break ;
 		request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
 		counter = counter.substr(k);
-		std::cout << "hey\n";
 	}
 	k = -1;
 	while (++k < request_v.size())
@@ -309,6 +320,8 @@ int	server::port_accessed(int fd)
 	static std::string sbuffer[FD_SETSIZE];
 	sbuffer[fd] += read_request(fd, &j);
 	//std::cout << sbuffer[fd] << std::endl;
+	if (sbuffer[fd].length() == 0)
+		return (-1);
 	if ((stat = check_request(sbuffer[fd])) != 1)
 	{
 		if (stat != 0)
