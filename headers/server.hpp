@@ -6,19 +6,18 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/01 12:51:09 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/05 15:35:09 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
-#include "includes.hpp"
-#include "location.hpp"
-#include "parser.hpp"
-#include "../cgi_test/cgi.hpp"
+#ifndef		SERVER_HPP
+#define		SERVER_HPP
+#include	"includes.hpp"
+#include	"location.hpp"
+#include	"parser.hpp"
+#include	"cgi.hpp"
 
 class location;
-class Cgi;
 
 class server {
 	private:
@@ -33,10 +32,11 @@ class server {
 		std::vector<std::string>	allow_methods;
 		//user request
 	public:
+		std::string					IPADDRESS;//gonna be deleted
 		std::vector<location>		locations;
 		std::vector<std::string>	cont_server;
 		int							s_fd;
-		int							c_fd;
+		std::vector<int>			c_fd;
 		fd_set						server_fds;
 		fd_set						ready_fds;
 		struct sockaddr_in 			s_address;
@@ -47,43 +47,45 @@ class server {
 		server();
 		~server();
 		//getters
-		int						get_port();
-		std::string				get_server_name();
-		std::string				get_error_page(int status);
-		std::string				get_root();
-		bool					get_autoindex();
-		int						get_client_body_limit();
-		std::string				get_path();
-		std::string				getus_path();
-		std::string				getus_method();
-		std::string				get_index();
-		std::vector<location>	get_locations();
+		int							get_port();
+		std::string					get_server_name();
+		std::string					get_error_page(int status);
+		std::string					get_root();
+		bool						get_autoindex();
+		int							get_client_body_limit();
+		std::string					get_path();
+		std::string					getus_path();
+		std::string					getus_method();
+		std::string					get_index();
+		std::vector<location>		get_locations();
 		//setters
-		void	set_port();
-		void	set_server_name();
-		void	setus_path(std::string path);
-		void	setus_method(std::string method);
-		void	set_root();
-		void	set_autoindex();
-		void	set_client_body_limit();
-		void	set_allow_methods();
-		void	set_index();
-		void	set_error_page();
+		void						set_port();
+		void						set_server_name();
+		void						setus_path(std::string path);
+		void						setus_method(std::string method);
+		void						set_root();
+		void						set_autoindex();
+		void						set_client_body_limit();
+		void						set_allow_methods();
+		void						set_index();
+		void						set_error_page();
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 		bool						check_brackets(std::string config);
-		void						port_accessed(int fd);
+		int							port_accessed(int fd);
 		std::string					search_file(std::string path);
-		void						get_page(int c_fd, std::string path);
+		void						get_page(int c_fd, std::string path, int status);
 		std::string					read_text(std::string path);
 		void 						get_page_cgi(int c_fd ,std::string path, location &local);
-
-		//parsers
-		void	split_locations(); // split locations and store it inside locations
+		//parse	
+		void						split_locations(); // split locations and store it inside locations
 		//setup server
-		void	manageports(int c_fd, std::string path_accessed, std::string method);
-		void	socketnmemset();
-		void	bindnlisten();
+		void						manageports(int c_fd, std::string path_accessed, std::string method);
+		void						socketnmemset();
+		void						bindnlisten();
+		bool 						check_header(int fd);
+		std::string					read_request(int fd, int *j);
+		int							check_request(std::string buff);
+		void 						uploadfiles(std::string sbuffer);
 };
-
 #endif

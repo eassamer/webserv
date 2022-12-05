@@ -6,11 +6,12 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/28 10:07:58 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/05 14:41:50 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.hpp"
+#include "../headers/includes.hpp"
 
 void	parser::fillncheck()
 {
@@ -19,7 +20,7 @@ void	parser::fillncheck()
 		throw errors("do3afa2:Config file dosen't exist.");
 	std::string line;
 	while (getline(fn, line))
-	{		
+	{
 		if (line.find('#') > line.size())
 			conf_content.push_back(line);
 		else
@@ -151,32 +152,32 @@ parser::~parser(){}
 
 void parser::split_servers()
 {
-    int x = 0;
-    int y = 0;
-    int a = 0;
-    for(int i = 0; i < conf_content.size(); i++)
-    {
-        if (conf_content[i] == "server {") // search server  inside config file
-        {
-            a++;
-            x = i;
-        }
-        else if (conf_content[i] == "}") // search } inside config file
-        {
-            a++;
-            y = i;
-        }
-        if (a == 2)
-        {
-            a = 0;
-            server tmp;
-            for (int j = x; j <= y;j++)
-                tmp.cont_server.push_back(conf_content[j]);
-            servers.push_back(tmp);
-            tmp.cont_server.clear();
-        }
-    }
-	for (int i = 0;i < servers.size();i++)
+	int x = 0;
+	int y = 0;
+	int a = 0;
+	for(int i = 0; i < conf_content.size(); i++)
+	{
+		if (conf_content[i] == "server {") // search server  inside config file
+		{
+			a++;
+			x = i;
+		}
+		else if (conf_content[i] == "}") // search } inside config file
+		{
+			a++;
+			y = i;
+		}	
+		if (a == 2)
+		{
+			a = 0;
+			server tmp;
+			for (int j = x; j <= y;j++)
+			    tmp.cont_server.push_back(conf_content[j]);
+			servers.push_back(tmp);
+			tmp.cont_server.clear();
+		}	
+	}
+	for (int i = 0; i < servers.size(); i++)
 	{
 		servers[i].split_locations();
 	}
@@ -237,24 +238,35 @@ void	parser::selectnaccept()
 				{
 					if (i == servers[j].s_fd)
 					{
-						std::cout << "\033[1;32mserver : connection request :" << servers[j].us_path << "|port:" << servers[j].get_port() << "\033[0m\n" ;
-						servers[j].c_fd = accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address);
-						if (servers[j].c_fd < 0)
+						servers[j].c_fd.push_back(accept(servers[j].s_fd, (struct sockaddr *)&servers[j].s_address, (socklen_t*)&servers[j].sl_address));
+						if (servers[j].c_fd[servers[j].c_fd.size() - 1] < 0)
 							throw errors("do3afa2:accept: couldn't accept request on port");
-						FD_SET(servers[j]. c_fd, &servers[j].server_fds);
+						std::cout << "\033[1;32m" << servers[j].get_server_name() << " : connection requested port : " << servers[j].get_port() << "\033[0m\n" ;
+						FD_SET(servers[j].c_fd[servers[j].c_fd.size() - 1], &servers[j].server_fds);
 					}
 					else
 					{
-						servers[j].port_accessed(servers[j].c_fd);
-						servers[j].manageports(servers[j].c_fd, servers[j].us_path, servers[j].us_method);
-						FD_CLR(i, &servers[j].server_fds);
-						std::cout << "\033[1;32mserver : connection closed\033[0m\n" ;
+						int pos;
+						int d = -1;
+						while (++d < servers[j].c_fd.size())
+							if (i == servers[j].c_fd[d])
+								break ;
+						if ((pos = servers[j].port_accessed(servers[j].c_fd[d])) != 0)
+						{
+							if (pos == 1)
+								servers[j].manageports(servers[j].c_fd[d], servers[j].us_path, servers[j].us_method);
+							else
+								servers[j].get_page(servers[j].c_fd[d], servers[j].get_error_page(404), pos);
+							FD_CLR(servers[j].c_fd[d], &servers[j].server_fds);
+							FD_CLR(servers[j].c_fd[d], &servers[j].ready_fds);
+							FD_CLR(servers[j].c_fd[d], &server_fds);
+							close(servers[j].c_fd[d]);
+							servers[j].c_fd.erase(servers[j].c_fd.begin() + d);
+							std::cout << "\033[1;31m" << servers[j].get_server_name() << " : connection closed\033[0m\n" ;
+						}	
 					}
-					break ;
 				}
 			}
-			if (j < servers.size())
-				break ;
 		}
 	}
 }

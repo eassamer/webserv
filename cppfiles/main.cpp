@@ -6,15 +6,15 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/11/30 18:34:41 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/05 16:56:50 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.hpp"
-#include "../cgi_test/cgi.hpp"
 
 int main(int arc, char **arv)
 {
+
 	try
 	{
 		parser mehdi;
@@ -27,6 +27,7 @@ int main(int arc, char **arv)
 		while (++i < mehdi.servers.size())
 		{
 			mehdi.servers[i].set_port();
+			mehdi.servers[i].IPADDRESS = arv[2];//gonna be deleted
 			mehdi.servers[i].set_server_name();
 			mehdi.servers[i].set_root();
 			mehdi.servers[i].set_allow_methods();
@@ -39,8 +40,14 @@ int main(int arc, char **arv)
 			{
 				mehdi.servers[i].locations[j].set_root();
 				mehdi.servers[i].locations[j].set_allow_methods();
-				mehdi.servers[i].locations[j].set_index();
 				mehdi.servers[i].locations[j].set_location_path();
+				if (mehdi.servers[i].locations[j].get_location_path().compare(0, 4, "/cgi") == 0){
+					
+					mehdi.servers[i].locations[j].set_cgi_path();
+					mehdi.servers[i].locations[j].set_cgi_extension();					
+				}
+				else
+					mehdi.servers[i].locations[j].set_index();
 			}
 			mehdi.servers[i].socketnmemset();
 			mehdi.servers[i].bindnlisten();

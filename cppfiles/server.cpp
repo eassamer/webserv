@@ -1,16 +1,16 @@
-	/* ************************************************************************** */
-	/*                                                                            */
-	/*                                                        :::      ::::::::   */
-	/*   server.cpp                                         :+:      :+:    :+:   */
-	/*                                                    +:+ +:+         +:+     */
-	/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
-	/*                                                +#+#+#+#+#+   +#+           */
-	/*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-	/*   Updated: 2022/11/18 15:50:10 by aer-razk         ###   ########.fr       */
-	/*                                                                            */
-	/* ************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
+/*   Updated: 2022/12/05 16:57:34 by bboulhan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-	#include "../headers/server.hpp"
+#include "../headers/server.hpp"
 
 server::server()
 {
@@ -210,20 +210,49 @@ void	server::bindnlisten()
 	if (bind(s_fd, (struct sockaddr *)&s_address, sizeof(s_address)) < 0)
 		throw errors("do3afa2:port is already taken.");
 	//MARKING SOCKET AS PASSIVE 'ABLE TO ACCEPTE INCOMING CONNECTIONS' AND MAKING A QUEUE OF CONNECTION REQUESTS TO BE EXTRACTED USING ACCEPT
-	if (listen(s_fd, 100) < 0)
+	if (listen(s_fd, 500) < 0)
 		throw errors("do3afa2:listen:couldn't make the queue on the socket");
 	//SETTING FD_SET
 	FD_ZERO(&server_fds);
 	FD_SET(s_fd, &server_fds);
-	std::cout << "\033[1;32m" << server_name << " listening on port : " << port << "\033[0m\n" ;
+	//std::cout << "\033[1;32m" << server_name << " : listening on port : 127.0.0.1:" << port << "\033[0m\n" ;
+	std::cout << "\033[1;32m" << server_name << " : listening on port : " << IPADDRESS << ":" << port << "\033[0m\n" ; //gonna be deleted
 }
 
-void	server::port_accessed(int fd)
+int	server::check_request(std::string buff)
+{
+	int j = 0;
+	std::vector<std::string> arr = ft_split(buff,'\n');
+	int size = arr.size() - 1;
+	std::vector<std::string> tmp;
+	if (arr[0].length() > 1 && buff.find("GET") > buff.length() && buff.find("DELETE") > buff.length() && buff.find("POST") > buff.length())
+		return (400);
+	for (int i = 0; i < arr.size();i++)
+	{
+		tmp = ft_split(arr[i],' ');
+		if (i == 0 && i != size)
+			if ((tmp.size() != 3) || (tmp[2] != "HTTP/1.1\r" && tmp[2] != "HTTP/1.0\r"))
+				return (400);
+		if (i == size)
+		{
+			if (size == 0)
+			{
+				std::cout << buff << std::endl;
+				return (0);
+			}
+			if (arr[size].length() == 1 && arr[size][0] == '\r')
+				break;
+		}
+	}
+	if (buff.find("POST") < buff.length() && buff.find("Content-Length:") > buff.length())
+		return (411);
+	return (1);
+}
+
+std::string server::read_request(int fd, int *j)
 {
 	char buffer[30000];
 	int i;
-	std::vector<std::string>    request_v;
-	int j = 0;
 	memset(buffer, 0, 30000);
 	std::string buffer1, sbuffer;
 	while ((i = read(fd, buffer, 29999)) > 0)
@@ -232,44 +261,67 @@ void	server::port_accessed(int fd)
 		sbuffer.append(buffer, i);
 		if (buffer1.find("Content-Type") > buffer1.length() && buffer[i - 1] == '\n')
 			break ;
-		j++;
-		if (j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
+		(*j)++;
+		if (*j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
 			break ;
 	}
-	//std::cout << sbuffer << std::endl;
-	if (j > 1)
+	return (sbuffer);
+}
+
+void	server::uploadfiles(std::string sbuffer)
+{
+	std::vector<std::string>    request_v;
+	std::string boundray = "--" + sbuffer.substr(sbuffer.find("boundary=") + 9, sbuffer.substr(sbuffer.find("boundary=") + 9).find("\r\n") - 1);
+	std::string files = sbuffer.substr(sbuffer.find(boundray));
+	int k = 0;
+	std::string counter;
+	counter = files;
+	while (k < counter.length())
 	{
-		std::string boundray = "--" + sbuffer.substr(sbuffer.find("boundary=") + 9, sbuffer.substr(sbuffer.find("boundary=") + 9).find("\r\n") - 1);
-		std::string file = sbuffer.substr(sbuffer.find(boundray));
-		int k = 0;
-		std::string counter;
-		counter = file;
-		while (k < counter.length())
+		k = counter.find(boundray) + boundray.length() + 1;
+		if (k > counter.length())
+			break ;
+		request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
+		counter = counter.substr(k);
+		std::cout << "hey\n";
+	}
+	k = -1;
+	while (++k < request_v.size())
+	{
+		if (request_v[k].find("filename=") > request_v[k].length())
+			request_v.erase(request_v.begin() + k);
+		else
 		{
-			k = counter.find(boundray) + boundray.length() + 1;
-			if (k > counter.length())
-				break ;
-			request_v.push_back(counter.substr(k, counter.substr(k).find(boundray)));
-			counter = counter.substr(k);
-		}
-		k = -1;
-		while (++k < request_v.size())
-		{
-			if (request_v[k].find("filename=") > request_v[k].length())
-				request_v.erase(request_v.begin() + k);
-			else
-			{
-				std::string filename = request_v[k].substr(request_v[k].find("filename=") + 10, request_v[k].substr(request_v[k].find("filename=") + 10).find("\r\n") - 1);
-				std::ofstream fnr( "./uploads/" + filename);
-				std::string content = request_v[k].substr(request_v[k].find("Content-Type:"));
-				std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
-				fnr << content2;
-				fnr.close();
-			}
+			std::string filename = request_v[k].substr(request_v[k].find("filename=") + 10, request_v[k].substr(request_v[k].find("filename=") + 10).find("\r\n") - 1);
+			std::ofstream fnr( "./uploads/" + filename);
+			std::string content = request_v[k].substr(request_v[k].find("Content-Type:"));
+			std::string content2 = content.substr(content.find("\r\n\r\n") + 4);
+			fnr << content2;
+			fnr.close();
 		}
 	}
-	us_path = sbuffer.substr(sbuffer.find("/"), sbuffer.substr(sbuffer.find("/"), sbuffer.length()).find(" "));
-	us_method = sbuffer.substr(0, sbuffer.find(" "));
+}
+
+int	server::port_accessed(int fd)
+{
+	int j = 0;
+	int stat;
+	static std::string sbuffer[FD_SETSIZE];
+	sbuffer[fd] += read_request(fd, &j);
+	//std::cout << sbuffer[fd] << std::endl;
+	if ((stat = check_request(sbuffer[fd])) != 1)
+	{
+		if (stat != 0)
+			sbuffer[fd].clear();
+		return (stat);
+	}
+	if (j > 1)
+		uploadfiles(sbuffer[fd]);
+	us_path = sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].length()).find(" "));
+	us_method = sbuffer[fd].substr(0, sbuffer[fd].find(" "));
+	//std::cout << sbuffer[fd] << std::endl;
+	sbuffer[fd].clear();
+	return (1);
 }
 
 int		server::get_port()
@@ -284,7 +336,6 @@ std::string	server::get_server_name()
 
 std::string	server::get_error_page(int status)
 {
-	std::cout << "\033[1;33mserver : response [status : " << status << " KO]\033[0m\n" ;
 	return error_page[status];
 }
 
@@ -313,15 +364,62 @@ std::string server::get_path()
 	return path;
 }
 
-void	server::get_page(int c_fd ,std::string path)
+void	server::get_page(int c_fd ,std::string path, int status)
 {
-	std::string http = "HTTP/1.1 200 OK\n";
+	std::map<int, std::string> status_map;
+	status_map[200] = "200 OK";
+	status_map[201] = "201 Created";
+	status_map[202] = "202 Accepted";
+	status_map[204] = "204 No Content";
+	status_map[301] = "301 Moved Permanently";
+	status_map[302] = "302 Found";
+	status_map[304] = "304 Not Modified";
+	status_map[400] = "400 Bad Request";
+	status_map[401] = "401 Unauthorized";
+	status_map[403] = "403 Forbidden";
+	status_map[404] = "404 Not Found";
+	status_map[405] = "405 Method Not Allowed";
+	status_map[406] = "406 Not Acceptable";
+	status_map[408] = "408 Request Timeout";
+	status_map[409] = "409 Conflict";
+	status_map[410] = "410 Gone";
+	status_map[411] = "411 Length Required";
+	status_map[413] = "413 Payload Too Large";
+	status_map[414] = "414 URI Too Long";
+	status_map[415] = "415 Unsupported Media Type";
+	status_map[416] = "416 Range Not Satisfiable";
+	status_map[417] = "417 Expectation Failed";
+	status_map[418] = "418 I'm a teapot";
+	status_map[421] = "421 Misdirected Request";
+	status_map[422] = "422 Unprocessable Entity";
+	status_map[423] = "423 Locked";
+	status_map[424] = "424 Failed Dependency";
+	status_map[426] = "426 Upgrade Required";
+	status_map[428] = "428 Precondition Required";
+	status_map[429] = "429 Too Many Requests";
+	status_map[431] = "431 Request Header Fields Too Large";
+	status_map[451] = "451 Unavailable For Legal Reasons";
+	status_map[500] = "500 Internal Server Error";
+	status_map[501] = "501 Not Implemented";
+	status_map[502] = "502 Bad Gateway";
+	status_map[503] = "503 Service Unavailable";
+	status_map[504] = "504 Gateway Timeout";
+	status_map[505] = "505 HTTP Version Not Supported";
+	status_map[506] = "506 Variant Also Negotiates";
+	status_map[507] = "507 Insufficient Storage";
+	status_map[508] = "508 Loop Detected";
+	status_map[510] = "510 Not Extended";
+	status_map[511] = "511 Network Authentication Required";
+
+	std::string http = "HTTP/1.1 " + status_map[status] + "\n";
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
 	std::string text = read_text(path);
+
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
+	std::cout << "\033[1;33m" << server_name << " : response [status : " + status_map[status] + "]\033[0m\n" ;
 }
 
 void	server::get_page_cgi(int c_fd ,std::string path, location &local)
@@ -331,15 +429,15 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local)
 	std::string l_content = "Content-Length:";
 	std::string text;
 	location b = local;
-	b.cgi_path = path;
+	// b.set_cgi_path();
 	Cgi ab(this, &b);
 	ab.execute_cgi();
 	std::string buffer;
 	int fd = fileno(ab.fdOut);
-	char *a = (char *)calloc(2, 1);
+	char *a = new char[2];
+	memset(a, 0, 2);
 	while (read(fd, a, 1))
 		text += a[0];
-	// std::cout << "*-*-*" << text << std::endl;
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
@@ -363,36 +461,27 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 	while (++i < allow_methods.size())
 		if (allow_methods[i] == method)
 			break ;
-	
 	if (i < allow_methods.size())
 	{
-		if (path_accessed == "/")
-		{
-			get_page(c_fd, get_root() + "/" + get_index());
-			std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
-		}
+		if (path_accessed == "/" || path_accessed == "")
+			get_page(c_fd, get_root() + "/" + get_index(), 200);
 		else
 		{
 			int i = -1;
 			while (++i < locations.size())
 				if (locations[i].get_location_path() == path_accessed)
 					break ;
-			if (i < locations.size())
-			{
+			if (i < locations.size()){
 				std::string str = locations[i].get_location_path();
 				if (str.find("cgi", 0) < str.size())
-				{
 					get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i]);
-				}
-				else{
-				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index());
-				std::cout << "\033[1;33mserver : response [status : 200 OK]\033[0m\n" ;
-				}
+				else
+					get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
 			}
 			else
-				get_page(c_fd, get_error_page(404));
+				get_page(c_fd, get_error_page(404), 404);
 		}
 	}
 	else
-		get_page(c_fd, get_error_page(405));
+		get_page(c_fd, get_error_page(405), 405);
 }
