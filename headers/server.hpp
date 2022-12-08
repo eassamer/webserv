@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 15:20:59 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:14:15 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include	"includes.hpp"
 #include	"location.hpp"
 #include	"parser.hpp"
+#include	"client.hpp"
 
 class location;
 
@@ -40,8 +41,7 @@ class server {
 		fd_set						ready_fds;
 		struct sockaddr_in 			s_address;
 		int 						sl_address;
-		std::string					us_method;
-		std::string					us_path;
+		client 						clients[FD_SETSIZE];
 		//orthodox canonical class methods
 		server();
 		~server();

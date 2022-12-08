@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 16:09:25 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:26:23 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ int	server::check_request(std::string &buff)
 	}
 	if (buff.find("POST") < buff.length() && buff.find("Content-Length:") > buff.length())
 		return (411);
-	if (buff.find("boundary=") < buff.length())
+	if (buff.find("boundary=") < buff.length() && buff.find("POST") < buff.length())
 	{
 		std::string boundray = "--" + buff.substr(buff.find("boundary=") + 9, buff.substr(buff.find("boundary=") + 9).find("\r\n") - 1);
 		std::string files = buff.substr(buff.find(boundray));
@@ -261,11 +261,14 @@ int	server::check_request(std::string &buff)
 
 std::string server::read_request(int fd, int *j)
 {
-	char buffer[30000000];
 	int i;
-	memset(buffer, 0, 30000000);
+	int d = 0;
+	size_t bytes = 0;
+	ioctl(fd, FIONREAD, &bytes);
+	char buffer[bytes + 1];
+	memset(buffer, 0, bytes + 1);
 	std::string buffer1, sbuffer;
-	while ((i = read(fd, buffer, 30000000)) > 0)
+	while ((i = read(fd, buffer, bytes)) > 0)
 	{
 		buffer1 = buffer;
 		sbuffer.append(buffer, i);
@@ -317,23 +320,19 @@ int	server::port_accessed(int fd)
 {
 	int j = 0;
 	int stat;
-	static std::string sbuffer[FD_SETSIZE];
-	sbuffer[fd] += read_request(fd, &j);
-	//std::cout << sbuffer[fd] << std::endl;
-	if (sbuffer[fd].length() == 0)
+	clients[fd].sbuffer += read_request(fd, &j);
+	if (clients[fd].sbuffer.length() == 0)
 		return (-1);
-	if ((stat = check_request(sbuffer[fd])) != 1)
+	if ((stat = check_request(clients[fd].sbuffer)) != 1)
 	{
 		if (stat != 0)
-			sbuffer[fd].clear();
+			clients[fd].clear();
 		return (stat);
 	}
 	if (j > 1)
-		uploadfiles(sbuffer[fd]);
-	us_path = sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].substr(sbuffer[fd].find("/"), sbuffer[fd].length()).find(" "));
-	us_method = sbuffer[fd].substr(0, sbuffer[fd].find(" "));
-	//std::cout << sbuffer[fd] << std::endl;
-	sbuffer[fd].clear();
+		uploadfiles(clients[fd].sbuffer);
+	std::cout << clients[fd].sbuffer << std::endl;
+	clients[fd].fill();
 	return (1);
 }
 

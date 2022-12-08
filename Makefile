@@ -8,7 +8,7 @@ GREEN=\033[0;32m
 
 NC=\033[0m
 
-FILES = cppfiles/main.cpp  cppfiles/server.cpp  cppfiles/location.cpp cppfiles/parser.cpp
+FILES = cppfiles/main.cpp  cppfiles/server.cpp  cppfiles/location.cpp cppfiles/parser.cpp cppfiles/client.cpp
 
 HEADERS = headers/*.hpp
 

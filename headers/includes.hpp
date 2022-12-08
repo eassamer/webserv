@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:02:13 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/02 14:34:18 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:18:52 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include	<fstream>
 #include	<vector>
 #include	<map>
+#include	<sys/ioctl.h>
 #include	<cstring>
 
 class errors:public std::exception
