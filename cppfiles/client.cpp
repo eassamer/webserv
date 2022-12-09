@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 12:21:08 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/08 18:17:28 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/09 12:39:10 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,29 @@ std::string client::search_inData(std::string type)
 	unsigned int x = sbuffer.find("\n", j); 
 	data = sbuffer.substr(j, x - j);
 	return data;
+}
+
+std::string client::get_Content_Length()
+{
+	return this->Content_Length;
+}
+
+std::string client::get_host_name()
+{
+	return this->host_name;
+}
+
+std::string client::get_query_string()
+{
+	return this->query_string;
+}
+
+std::string client::get_Content_Type()
+{
+	return this->Content_Type;
+}
+
+std::string client::get_remote_addr()
+{
+	return this->remote_addr;
 }

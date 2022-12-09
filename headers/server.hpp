@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/08 12:14:15 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/09 12:16:52 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include	"location.hpp"
 #include	"parser.hpp"
 #include	"client.hpp"
+#include 	"cgi.hpp"
 
 class location;
 
@@ -74,6 +75,7 @@ class server {
 		int							port_accessed(int fd);
 		std::string					search_file(std::string path);
 		void						get_page(int c_fd, std::string path, int status);
+		void 						get_page_cgi(int c_fd ,std::string path, location &local, client &client);
 		std::string					read_text(std::string path);
 		//parse	
 		void						split_locations(); // split locations and store it inside locations

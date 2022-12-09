@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/08 12:26:23 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/09 12:33:46 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,12 +263,10 @@ std::string server::read_request(int fd, int *j)
 {
 	int i;
 	int d = 0;
-	size_t bytes = 0;
-	ioctl(fd, FIONREAD, &bytes);
-	char buffer[bytes + 1];
-	memset(buffer, 0, bytes + 1);
+	char buffer[30000];
+	memset(buffer, 0, 30000);
 	std::string buffer1, sbuffer;
-	while ((i = read(fd, buffer, bytes)) > 0)
+	while ((i = read(fd, buffer, 30000)) > 0)
 	{
 		buffer1 = buffer;
 		sbuffer.append(buffer, i);
@@ -434,6 +432,25 @@ void	server::get_page(int c_fd ,std::string path, int status)
 	std::cout << "\033[1;33m" << server_name << " : response [status : " + status_map[status] + "]\033[0m\n" ;
 }
 
+void	server::get_page_cgi(int c_fd ,std::string path, location &local, client &client)
+{
+	std::string http = "HTTP/1.1 200 OK\n";
+	std::string t_content = "Content-Type: text/html\n";
+	std::string l_content = "Content-Length:";
+	std::string text;
+	Cgi ab(this, &local, &client);
+	ab.execute_cgi();
+	std::string buffer;
+	int fd = fileno(ab.fdOut);
+	char *a = new char[2];
+	memset(a, 0, 2);
+	while (read(fd, a, 1))
+		text += a[0];
+	l_content += std::to_string(text.length()) + "\n\n";
+	std::string everything = http + t_content + l_content + text;
+	write(c_fd , everything.c_str() , everything.length());
+}
+
 std::string server::read_text(std::string path)
 {
 	std::string text;
@@ -462,8 +479,13 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			while (++i < locations.size())
 				if (locations[i].get_location_path() == path_accessed)
 					break ;
-			if (i < locations.size())
-				get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
+			if (i < locations.size()){
+				std::string str = locations[i].get_location_path();
+				if (str.find("cgi", 0) < str.size())
+					get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i], this->clients[c_fd]);
+				else
+					get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
+			}
 			else
 				get_page(c_fd, get_error_page(404), 404);
 		}

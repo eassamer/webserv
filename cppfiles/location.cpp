@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/05 15:57:50 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/09 12:45:31 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,24 @@ std::string	location::get_index(void)
 	return (this->index);
 }
 
-void		location::set_cgi_handler()
+void		location::set_cgi_path()
 {
-	std::vector<std::string> cgi = checknsearch("cgi_path");
-	cgi_handler = cgi[0];
+	std::vector<std::string> cgi = checknsearch("index");
+	cgi_path = cgi[0];
 }
 
-std::string	location::get_cgi_handler()
+void		location::set_cgi_extension()
 {
-	return (cgi_handler);
+	std::vector<std::string> cgi = checknsearch("cgi_extension");
+	cgi_extension = cgi[0];
+}
+
+std::string	location::get_cgi_path()
+{
+	return (cgi_path);
+}
+
+std::string	location::get_cgi_extension()
+{
+	return (cgi_extension);
 }
