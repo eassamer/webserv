@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/19 16:13:04 by bboulhan          #+#    #+#             */
-/*   Updated: 2022/12/09 12:37:48 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/09 14:45:20 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ void Cgi::env_init()
 	this->env["SERVER_PROTOCOL"] = "HTTP/1.1";
 	this->env["GATEWAY_INTERFACE"] = "CGI/1.1";
 	this->env["SERVER_SOFTWARE"] = "webserv/1.0";
+	this->env["REDIRECT_STATUS"] = "200";
 	this->env["SERVER_NAME"] = this->serv->get_server_name();
 	this->env["SERVER_PORT"] = this->serv->get_port();
 	this->env["REQUEST_METHOD"] = this->cli->method;
@@ -137,10 +138,14 @@ void Cgi::env_init()
 		this->env["CONTENT_LENGTH"] = "";
 		this->env["CONTENT_TYPE"] = "";
 	}
-	this->env["AUTH_TYPE"] = "";
-	if (this->env["AUTH_TYPE"] == ""){
-	this->env["REMOTE_USER"] = "";
-	this->env["REMOTE_IDENT"] = "";
+	this->env["AUTH_TYPE"] = this->cli->get_Authorization();
+	if (this->cli->get_Authorization() == ""){
+	this->env["REMOTE_USER"] = this->cli->convert_encodedForm("REMOTE_USER");
+	this->env["REMOTE_IDENT"] = this->cli->convert_encodedForm("REMOTE_IDENT");
+	}
+	else{
+		this->env["REMOTE_USER"] = "";
+		this->env["REMOTE_IDENT"] = "";
 	}
 }
 

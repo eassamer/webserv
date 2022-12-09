@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 12:21:08 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 12:39:10 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/09 13:06:13 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ void	client::fill()
 	path = this->convert_encodedForm(path);
 	this->Content_Type = search_inData("Content-Type:");
 	this->Content_Length = search_inData("Content-Length:");
-	
+	this->host_name = search_inData("Host:");
+	this->query_string = search_inData("Query-String:");
+	this->Authorization = search_inData("Authorization");	
 }
 
 std::string client::convert_encodedForm(std::string str)
@@ -66,27 +68,26 @@ std::string client::search_inData(std::string type)
 	return data;
 }
 
-std::string client::get_Content_Length()
-{
+std::string client::get_Content_Length(){
 	return this->Content_Length;
 }
 
-std::string client::get_host_name()
-{
+std::string client::get_host_name(){
 	return this->host_name;
 }
 
-std::string client::get_query_string()
-{
+std::string client::get_query_string(){
 	return this->query_string;
 }
 
-std::string client::get_Content_Type()
-{
+std::string client::get_Content_Type(){
 	return this->Content_Type;
 }
 
-std::string client::get_remote_addr()
-{
+std::string client::get_remote_addr(){
 	return this->remote_addr;
+}
+
+std::string client::get_Authorization(){
+	return this->Authorization;
 }

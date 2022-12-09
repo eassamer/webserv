@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 12:08:05 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 11:59:44 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/09 13:03:52 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class client
 		std::string query_string;
 		std::string Content_Type;
 		std::string remote_addr;
+		std::string Authorization;
 		
 	public:
 		std::string method;
@@ -35,6 +36,7 @@ class client
 		std::string get_query_string();
 		std::string get_Content_Type();
 		std::string get_remote_addr();
+		std::string get_Authorization();
 		
 		void		clear();
 		void		fill();

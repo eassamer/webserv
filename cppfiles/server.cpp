@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 12:33:46 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/09 14:38:59 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,7 +216,7 @@ void	server::bindnlisten()
 	FD_ZERO(&server_fds);
 	FD_SET(s_fd, &server_fds);
 	//std::cout << "\033[1;32m" << server_name << " : listening on port : 127.0.0.1:" << port << "\033[0m\n" ;
-	std::cout << "\033[1;32m" << server_name << " : listening on port : " << IPADDRESS << ":" << port << "\033[0m\n" ; //gonna be deleted
+	std::cout << "\033[1;32m" << server_name << " : listening on port : " << "http://"<< IPADDRESS << ":" << port << "\033[0m\n" ; //gonna be deleted
 }
 
 int	server::check_request(std::string &buff)
