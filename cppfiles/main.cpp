@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:56 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 12:45:08 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/11 12:28:06 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,10 @@ int main(int arc, char **arv)
 				mehdi.servers[i].locations[j].set_root();
 				mehdi.servers[i].locations[j].set_allow_methods();
 				mehdi.servers[i].locations[j].set_index();
+				mehdi.servers[i].locations[j].set_autoindex();
 				mehdi.servers[i].locations[j].set_location_path();
-				if (mehdi.servers[i].locations[j].get_location_path().compare(0, 4, "/cgi") == 0){
-					
-					mehdi.servers[i].locations[j].set_cgi_path();
-					mehdi.servers[i].locations[j].set_cgi_extension();					
-				}
-				
+				mehdi.servers[i].locations[j].set_cgi_path();
+				mehdi.servers[i].locations[j].set_cgi_extension();							
 			}
 			mehdi.servers[i].socketnmemset();
 			mehdi.servers[i].bindnlisten();

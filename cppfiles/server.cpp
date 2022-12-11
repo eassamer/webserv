@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 14:38:59 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/11 13:32:23 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,6 @@ void server::set_error_page()
 {
 	std::vector<std::string>    error_page_v = this->checknsearch("error_page");
 
-	this->error_page.insert(std::pair<int,std::string>(405, "./default/405.html"));
 	if (error_page_v[0].size() == 0)
 		throw errors("do3afa2:error page number is wrong");
 	for (int i = 0;i < error_page_v[0].size();i++)
@@ -253,6 +252,8 @@ int	server::check_request(std::string &buff)
 		while (++i < contentl.length())
 			if (!isnumber(contentl[i]))
 				return (400);
+		if (std::stoi(contentl) > client_body_limit)
+			return (413);
 		if (files.length() != std::stoi(contentl))
 			return (0);
 	}
@@ -270,6 +271,23 @@ std::string server::read_request(int fd, int *j)
 	{
 		buffer1 = buffer;
 		sbuffer.append(buffer, i);
+		if (sbuffer.find("Content-Length:") < sbuffer.length())
+		{
+			std::string contentl = sbuffer.substr(sbuffer.find("Content-Length:") + 16, sbuffer.substr(sbuffer.find("Content-Length:") + 16).find("\r\n"));
+			int i = -1;
+			while (i < contentl.length())
+				if (!isnumber(contentl[i]))
+					break ;
+			if (i == contentl.length())
+			{
+				if (client_body_limit < std::stoi(contentl))
+				{
+					sbuffer.clear();
+					sbuffer = "413";
+					return (sbuffer);
+				}
+			}
+		}
 		if (buffer1.find("Content-Type") > buffer1.length() && buffer[i - 1] == '\n')
 			break ;
 		(*j)++;
@@ -321,6 +339,8 @@ int	server::port_accessed(int fd)
 	clients[fd].sbuffer += read_request(fd, &j);
 	if (clients[fd].sbuffer.length() == 0)
 		return (-1);
+	if (clients[fd].sbuffer == "413")
+		return (413);
 	if ((stat = check_request(clients[fd].sbuffer)) != 1)
 	{
 		if (stat != 0)
@@ -346,7 +366,10 @@ std::string	server::get_server_name()
 
 std::string	server::get_error_page(int status)
 {
-	return error_page[status];
+	if (error_page[status].length())
+		return error_page[status];
+	else
+		return "./default/405.html";
 }
 
 std::string server::get_index()
@@ -421,11 +444,17 @@ void	server::get_page(int c_fd ,std::string path, int status)
 	status_map[510] = "510 Not Extended";
 	status_map[511] = "511 Network Authentication Required";
 
+	std::string text = read_text(path);
+	if (!text.length())
+	{
+		text = read_text(get_error_page(404));
+		status = 404;
+	}
 	std::string http = "HTTP/1.1 " + status_map[status] + "\n";
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
-	std::string text = read_text(path);
-
+	if (status != 200 && !error_page[status].length())
+		text.insert(text.find(";\">") + 3, "<h1>" + status_map[status] + "</h1>");
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
@@ -449,6 +478,7 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local, client &c
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
+	std::cout << "\033[1;33m" << server_name << " : response [status : 200 OK]\033[0m\n" ;
 }
 
 std::string server::read_text(std::string path)
@@ -457,7 +487,7 @@ std::string server::read_text(std::string path)
 	std::string buffer;
 	std::ifstream	fn(path);
 	if (!fn)
-		throw errors("do3afa2:invalid path from config file.");
+		return (text.clear(), text);
 	while(getline(fn, buffer))
 		text += buffer;
 	return (text);
@@ -471,23 +501,38 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			break ;
 	if (i < allow_methods.size())
 	{
-		if (path_accessed == "/" || path_accessed == "")
-			get_page(c_fd, get_root() + "/" + get_index(), 200);
-		else
+		if (method == "DELETE")
 		{
-			int i = -1;
-			while (++i < locations.size())
-				if (locations[i].get_location_path() == path_accessed)
-					break ;
-			if (i < locations.size()){
-				std::string str = locations[i].get_location_path();
-				if (str.find("cgi", 0) < str.size())
-					get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i], this->clients[c_fd]);
+			if (path_accessed.length() > 9 && path_accessed.substr(0, 9) == "/uploads/")
+			{
+				
+				std::cout << path_accessed.c_str() << std::endl;
+				if (!remove(("." + path_accessed).c_str()))
+					get_page(c_fd, get_error_page(202), 202);
 				else
-					get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
+					get_page(c_fd, get_error_page(204), 204);
 			}
+		}
+		else
+		{			
+			if (path_accessed == "/" || path_accessed == "")
+				get_page(c_fd, get_root() + "/" + get_index(), 200);
 			else
-				get_page(c_fd, get_error_page(404), 404);
+			{
+				int i = -1;
+				while (++i < locations.size())
+					if (locations[i].get_location_path() == path_accessed)
+						break ;
+				if (i < locations.size()){
+					std::string str = locations[i].get_location_path();
+					if (locations[i].get_cgi_extension().length() != 0)
+						get_page_cgi(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), locations[i], this->clients[c_fd]);
+					else
+						get_page(c_fd, locations[i].get_root() + "/" + locations[i].get_index(), 200);
+				}
+				else
+					get_page(c_fd, get_error_page(404), 404);
+			}
 		}
 	}
 	else

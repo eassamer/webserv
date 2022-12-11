@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 12:45:31 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/11 12:22:09 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,7 @@ std::vector<std::string>	location::checknsearch(std::string var)
 		}
 	}
 	if (splits.size() == 0)
-	{
-		char echo[30000];
-		std::sprintf(echo ,"do3afa2:%s:lack of tag.", var.c_str());
-		throw errors(echo);
-	}
+		return (splits.push_back("") ,splits);
 	if (splits[splits.size() - 1][splits[splits.size() - 1].length() - 1] != ';')
 		throw errors("do3afa2a:tag is not closed 'missing ;'");     
 	splits[splits.size() - 1] = splits[splits.size() - 1].substr(0, splits[splits.size() - 1].length() - 1);
@@ -86,6 +82,12 @@ void		location::set_allow_methods()
 		else
 			throw errors("do3afa2:allow_methods bad arguments!");
 	}
+}
+
+void		location::set_autoindex()
+{
+	std::vector<std::string>autoindex_p = this->checknsearch("autoindex_p");
+	this->root = autoindex_p[0];
 }
 
 void		location::set_root()

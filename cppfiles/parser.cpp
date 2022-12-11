@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 12:10:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/08 12:24:46 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/09 15:40:04 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,15 @@
 
 void	parser::fillncheck()
 {
-	std::ifstream	fn(this->conf_path);
+	std::ifstream fn;
+	if (!conf_path.length())
+		fn.open("./default/do3afa2_default.conf");
+	else
+		fn.open(conf_path);
 	if (!fn)//if the file in the arg dosen't exist!
-		throw errors("do3afa2:Config file dosen't exist.");
+		throw errors("do3afa2:error in config file opening.");
+	if (!conf_path.length())
+		std::cout << "\033[1;31mWarning: you're using do3afa2's default config file.\033[0m\n" ;
 	std::string line;
 	while (getline(fn, line))
 	{
@@ -51,12 +57,16 @@ void	parser::fillncheck()
 
 void	parser::set_conf_path(char *conf_path)
 {
-	if (conf_path == NULL)//if there's no argument in path!
-		throw errors("do3afa2 : no config file.");
+	/*if (conf_path == NULL)//if there's no argument in path!
+		throw errors("do3afa2 : no config file.");*/
 	std::string conf = conf_path;
 	if (conf.length() < 6 || conf.substr(conf.length() - 5, conf.length()) != ".conf")//if the extension is different from '.conf'!
-		throw errors("do3afa2:File extension '.conf' incorrect.");
-	this->conf_path = conf_path;
+		conf.clear();
+	std::ifstream fn(conf_path);
+	if (!fn)
+		conf.clear();
+		//throw errors("do3afa2:File extension '.conf' incorrect.");
+	this->conf_path = conf;
 }
 
 void	parser::checkspaces()
@@ -256,7 +266,7 @@ void	parser::selectnaccept()
 							if (pos == 1)
 								servers[j].manageports(servers[j].c_fd[d], servers[j].clients[servers[j].c_fd[d]].path, servers[j].clients[servers[j].c_fd[d]].method);
 							else if (pos != -1)
-								servers[j].get_page(servers[j].c_fd[d], servers[j].get_error_page(404), pos);
+								servers[j].get_page(servers[j].c_fd[d], servers[j].get_error_page(pos), pos);
 							FD_CLR(servers[j].c_fd[d], &servers[j].server_fds);
 							FD_CLR(servers[j].c_fd[d], &servers[j].ready_fds);
 							FD_CLR(servers[j].c_fd[d], &server_fds);
