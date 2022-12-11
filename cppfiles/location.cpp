@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/11 12:22:09 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/11 20:48:32 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,15 +104,17 @@ void		location::set_location_path()
 	this->location_path = splits[0];
 }
 
-void		location::set_index()
+void		location::set_index(bool autoindex)
 {
 	std::vector<std::string> index_p = this->checknsearch("index");
-	if (!index_p[0].length())
+	if (!index_p[0].length() && autoindex == true)
 	{
 		this->autoindex = true;
 		this->index = "";
 		return ;
 	}
+	else if (!index_p[0].length() && autoindex == false)
+		throw errors("do3afa2:missing index while autoindex is off\n");
 	this->index = index_p[0];
 }
 

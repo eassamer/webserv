@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/11 13:32:23 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/11 20:43:07 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -564,17 +564,16 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			if (path_accessed.length() > 9 && path_accessed.substr(0, 9) == "/uploads/")
 			{
 				
-				std::cout << path_accessed.c_str() << std::endl;
 				if (!remove(("." + path_accessed).c_str()))
 					get_page(c_fd, get_error_page(202), 202);
 				else
 					get_page(c_fd, get_error_page(204), 204);
 			}
 			else
-				get_page(c_fd, get_error_page(204), 204);
+				get_page(c_fd, get_error_page(409), 409);
 		}
 		else
-		{			
+		{	
 			if (path_accessed == "/" || path_accessed == "")
 				get_page(c_fd, get_root() + "/" + get_index(), 200);
 			else
@@ -585,7 +584,7 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 						break ;
 				if (i < locations.size()){
 					std::string str = locations[i].get_location_path();
-					if (locations[i].get_autoindex() == true)
+					if (locations[i].get_autoindex() == true && autoindex == true)
 					{
 						j++;
 						Autoindex pathh(locations[i].get_root());
