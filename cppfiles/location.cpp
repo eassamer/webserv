@@ -58,7 +58,9 @@ std::vector<std::string>	location::checknsearch(std::string var)
 		}
 	}
 	if (splits.size() == 0)
+	{
 		return (splits.push_back("") ,splits);
+	}
 	if (splits[splits.size() - 1][splits[splits.size() - 1].length() - 1] != ';')
 		throw errors("do3afa2a:tag is not closed 'missing ;'");     
 	splits[splits.size() - 1] = splits[splits.size() - 1].substr(0, splits[splits.size() - 1].length() - 1);
@@ -84,11 +86,11 @@ void		location::set_allow_methods()
 	}
 }
 
-void		location::set_autoindex()
-{
-	std::vector<std::string>autoindex_p = this->checknsearch("autoindex_p");
-	this->root = autoindex_p[0];
-}
+// void		location::set_autoindex()
+// {
+// 	std::vector<std::string>autoindex_p = this->checknsearch("autoindex_p");
+// 	this->root = autoindex_p[0];
+// }
 
 void		location::set_root()
 {
@@ -105,6 +107,12 @@ void		location::set_location_path()
 void		location::set_index()
 {
 	std::vector<std::string> index_p = this->checknsearch("index");
+	if (!index_p[0].length())
+	{
+		this->autoindex = true;
+		this->index = "";
+		return ;
+	}
 	this->index = index_p[0];
 }
 
@@ -143,4 +151,9 @@ std::string	location::get_cgi_path()
 std::string	location::get_cgi_extension()
 {
 	return (cgi_extension);
+}
+
+bool location::get_autoindex()
+{
+	return this->autoindex;
 }

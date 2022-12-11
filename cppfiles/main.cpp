@@ -40,7 +40,6 @@ int main(int arc, char **arv)
 				mehdi.servers[i].locations[j].set_root();
 				mehdi.servers[i].locations[j].set_allow_methods();
 				mehdi.servers[i].locations[j].set_index();
-				mehdi.servers[i].locations[j].set_autoindex();
 				mehdi.servers[i].locations[j].set_location_path();
 				mehdi.servers[i].locations[j].set_cgi_path();
 				mehdi.servers[i].locations[j].set_cgi_extension();							

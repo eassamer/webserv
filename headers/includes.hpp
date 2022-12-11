@@ -30,7 +30,8 @@
 #include	<map>
 #include	<sys/ioctl.h>
 #include	<cstring>
-
+# include <sys/stat.h>
+# include <dirent.h>
 class errors:public std::exception
 {
 	private:

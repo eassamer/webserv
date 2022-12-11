@@ -17,7 +17,9 @@
 #include	"parser.hpp"
 #include	"client.hpp"
 #include 	"cgi.hpp"
+#include "Autoindex.hpp"
 
+class Autoindex;
 class location;
 
 class server {
@@ -87,5 +89,6 @@ class server {
 		std::string					read_request(int fd, int *j);
 		int							check_request(std::string &buff);
 		void 						uploadfiles(std::string sbuffer);
+		void						get_page_autoindex(int c_fd, std::string path);
 };
 #endif

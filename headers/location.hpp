@@ -21,6 +21,7 @@ class location
 		std::vector<std::string>	allow_methods;
 		std::string					location_path;
 		std::string					index;
+		bool						autoindex;
 		std::string					cgi_path;
 		std::string					cgi_extension;
 	public:
@@ -41,9 +42,10 @@ class location
 		void						set_allow_methods();
 		void						set_root();
 		void						set_index();
-		void						set_autoindex();
+		//void						set_autoindex();
 		void						set_cgi_extension();
 		void						set_cgi_path();
+
 		//methods
 		std::vector<std::string>	checknsearch(std::string var);
 };
