@@ -567,7 +567,6 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 {
 	static int j = 0;
 	int i = -1;
-	std::cout << "| " << path_accessed << " |\n";
 	while (++i < allow_methods.size())
 		if (allow_methods[i] == method)
 			break ;
