@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/12 12:13:10 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:29:45 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -453,10 +453,12 @@ void	server::get_page(int c_fd ,std::string path, int status)
 	std::string http = "HTTP/1.1 " + status_map[status] + "\n";
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
+	std::string cookie = "Set-Cookie: USER_ID=" + clients[c_fd].RandomString() + "\n";
+	
 	if (status != 200 && !error_page[status].length())
 		text.insert(text.find(";\">") + 3, "<h1>" + status_map[status] + "</h1>");
 	l_content += std::to_string(text.length()) + "\n\n";
-	std::string everything = http + t_content + l_content + text;
+	std::string everything = http + t_content + cookie + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
 	std::cout << "\033[1;33m" << server_name << " : response [status : " + status_map[status] + "]\033[0m\n" ;
 }
@@ -475,6 +477,7 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local, client &c
 	memset(a, 0, 2);
 	while (read(fd, a, 1))
 		text += a[0];
+	delete []a;
 	l_content += std::to_string(text.length()) + "\n\n";
 	std::string everything = http + t_content + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());

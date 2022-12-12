@@ -6,7 +6,7 @@
 /*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/19 16:13:04 by bboulhan          #+#    #+#             */
-/*   Updated: 2022/12/09 14:45:20 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/12 16:07:12 by bboulhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Cgi::Cgi(server *serv, location *loc, client *cli){
 	this->loc = loc;
 	this->serv = serv;
 	this->cli = cli;
+	c_env = NULL;
 }
 
 Cgi::Cgi(const Cgi &copy)
@@ -87,7 +88,7 @@ std::string Cgi::Script::get_name() const{
 }
 
 Cgi::Script::~Script(){
-	if (this->arg)
+	if (this->arg != NULL)
 	{
 		int i = -1;
 		while (this->arg[++i])
@@ -166,15 +167,6 @@ void Cgi::convert_env()
 	this->c_env[i] = NULL;
 }
 
-void print_table(char **env)
-{
-	int  i = -1;
-	while (env[++i])
-	{
-		printf("%s\n", env[i]);
-	}
-}
-
 void Cgi::execute_cgi()
 {
 	int fd_in;
@@ -186,7 +178,6 @@ void Cgi::execute_cgi()
 	env_init();
 	convert_env();
 	set_script();
-	// print_table(this->c_env);
 	fd_in = dup(STDIN_FILENO);
 	fd_out = dup(STDOUT_FILENO);
 	
@@ -210,13 +201,12 @@ void Cgi::execute_cgi()
 			it++;
 		}
 		execve((*it)->get_arg()[0], (*it)->get_arg(), this->c_env);
-		// execve("./cgi_tester", NULL, c_env);
 		std::cout << "Error\n";
 		write(STDOUT_FILENO, "Status: 500\r\n\r\n", 15);
 	}
 	else
 	{
-		waitpid(pid, NULL, 0);
+		waitpid(-1, NULL, 0);
 		lseek(fdCgi_out, 0, SEEK_SET);
 	}
 	dup2(fd_in, STDIN_FILENO);
@@ -231,4 +221,10 @@ Cgi::~Cgi()
 	while(this->c_env[++i])
 		delete this->c_env[i];
 	delete [] this->c_env;
+	std::vector<Cgi::Script*>::iterator it = tools.begin();
+	std::vector<Cgi::Script*>::iterator ite = tools.end();
+	while (it != ite){
+		delete *it;
+		it++;
+	}
 }
