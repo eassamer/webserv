@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/12 17:29:45 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/12 19:51:43 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,18 @@ std::string server::read_request(int fd, int *j)
 		}
 		if (buffer1.find("Content-Type") > buffer1.length() && buffer[i - 1] == '\n')
 			break ;
+		if (buffer1.find("Content-Type: application/x-www-form-urlencoded") < buffer1.length())
+			break ;
 		(*j)++;
+		if (sbuffer.find("boundary=") < sbuffer.length())
+		{
+			std::string boundray = "--" + sbuffer.substr(sbuffer.find("boundary=") + 9, sbuffer.substr(sbuffer.find("boundary=") + 9).find("\r\n") - 1);
+			if (sbuffer.find(boundray) < sbuffer.length() && (buffer[i - 1] == '\n' && buffer[i - 2] == '\r'))
+			{
+				(*j)++;
+				break ;
+			}
+		}
 		if (*j > 1 && buffer[i - 1] == '\n' && buffer[i - 2] == '\r')
 			break ;
 	}
@@ -468,6 +479,7 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local, client &c
 	std::string http = "HTTP/1.1 200 OK\n";
 	std::string t_content = "Content-Type: text/html\n";
 	std::string l_content = "Content-Length:";
+	std::string cookie = "Set-Cookie: USER_ID=" + clients[c_fd].RandomString() + "\n";
 	std::string text;
 	Cgi ab(this, &local, &client);
 	ab.execute_cgi();
@@ -479,7 +491,7 @@ void	server::get_page_cgi(int c_fd ,std::string path, location &local, client &c
 		text += a[0];
 	delete []a;
 	l_content += std::to_string(text.length()) + "\n\n";
-	std::string everything = http + t_content + l_content + text;
+	std::string everything = http + t_content + cookie + l_content + text;
 	write(c_fd , everything.c_str() , everything.length());
 	std::cout << "\033[1;33m" << server_name << " : response [status : 200 OK]\033[0m\n" ;
 }
@@ -579,15 +591,13 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 		{
 			if (path_accessed.length() > 9 && path_accessed.substr(0, 9) == "/uploads/")
 			{
-				
-				std::cout << path_accessed.c_str() << std::endl;
 				if (!remove(("." + path_accessed).c_str()))
 					get_page(c_fd, get_error_page(202), 202);
 				else
 					get_page(c_fd, get_error_page(204), 204);
 			}
 			else
-				get_page(c_fd, get_error_page(204), 204);
+				get_page(c_fd, get_error_page(409), 409);
 		}
 		else
 		{			

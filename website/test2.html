@@ -1,8 +1,69 @@
-<!DOCTYPE html>
 <html>
 	<body>
-		<h1>My First Hdfhgeading</h1>
-		<p>My first paragraph.</p>
+		<form method="post">
+			<div class="imgcontainer">
+			<img src="img_avatar2.png" alt="Avatar" class="avatar">
+			</div>
+		
+			<div class="container">
+			<label for="uname"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" name="uname" required>
+		
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" required>
+		
+			<button id="hey">Login</button>
+			<label>
+				<input type="checkbox" checked="checked" name="remember"> Remember me
+			</label>
+			</div>
+		
+			<div class="container" style="background-color:#f1f1f1">
+			<button type="button" class="cancelbtn">Cancel</button>
+			<span class="psw">Forgot <a href="#">password?</a></span>
+			</div>
+		</form>
+		<script>
+		</script>
 	</body>
-</html>
+	<script>
+		function getCookie(name) {
+		var dc = document.cookie;
+		var prefix = name + "=";
+		var begin = dc.indexOf("; " + prefix);
+		if (begin == -1) {
+			begin = dc.indexOf(prefix);
+			if (begin != 0) return null;
+		}
+		else
+		{
+			begin += 2;
+			var end = document.cookie.indexOf(";", begin);
+			if (end == -1) {
+			end = dc.length;
+			}
+		}
+	
+		return decodeURI(dc.substring(begin + prefix.length, end));
+		} 
 
+		function doSomething() {
+			var myCookie = getCookie("USER_ID");
+
+			if (myCookie == null) {
+				console.log("no cookie");
+			}
+			else {
+				myFunction("./main")
+			}
+		}
+
+		function myFunction(web) {
+			location.replace(web)
+		}
+
+		document.getElementById("hey").onclick = doSomething();
+
+		console.log("hey")
+	</script>
+</html>

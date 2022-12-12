@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/Users/aer-razk/Desktop/webserv",
-      "program": "/Users/aer-razk/Desktop/webserv/build/Debug/outDebug",
+      "cwd": "/Users/aer-razk/Desktop/karim",
+      "program": "/Users/aer-razk/Desktop/karim/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

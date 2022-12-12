@@ -18,6 +18,8 @@ OBJS = $(FILES:.cpp=.o)
 
 all: $(NAME)
 	@echo "$(GREEN)✔$(NC) Compiled."
+	@mkdir -p fobjs
+	@mkdir -p uploads
 	@mv cppfiles/*.o fobjs
 
 dir:
