@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 13:48:36 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/11 20:48:32 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/12 11:38:39 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,21 +86,19 @@ void		location::set_allow_methods()
 	}
 }
 
-// void		location::set_autoindex()
-// {
-// 	std::vector<std::string>autoindex_p = this->checknsearch("autoindex_p");
-// 	this->root = autoindex_p[0];
-// }
-
 void		location::set_root()
 {
 	std::vector<std::string> root_p = this->checknsearch("root");
+	if (!root_p[0].length())
+		throw errors("do3afa2:root is missing in location.");
 	this->root = root_p[0];
 }
 
 void		location::set_location_path()
 {
-	std::vector<std::string> splits = this->checknsearch("location");;
+	std::vector<std::string> splits = this->checknsearch("location");
+	if (!splits[0].length())
+		throw errors("do3afa2:location is invalid.");
 	this->location_path = splits[0];
 }
 
@@ -114,7 +112,7 @@ void		location::set_index(bool autoindex)
 		return ;
 	}
 	else if (!index_p[0].length() && autoindex == false)
-		throw errors("do3afa2:missing index while autoindex is off\n");
+		throw errors("do3afa2:missing index while autoindex is off.");
 	this->index = index_p[0];
 }
 
@@ -136,12 +134,22 @@ std::string	location::get_index(void)
 void		location::set_cgi_path()
 {
 	std::vector<std::string> cgi = checknsearch("index");
+	if (!cgi[0].length() && autoindex == true)
+	{
+		this->autoindex = true;
+		this->index = "";
+		return ;
+	}
+	else if (!cgi[0].length() && autoindex == false)
+		throw errors("do3afa2:missing index while autoindex is off.");
 	cgi_path = cgi[0];
 }
 
 void		location::set_cgi_extension()
 {
 	std::vector<std::string> cgi = checknsearch("cgi_extension");
+	if (!index.length() && cgi[0].length())
+		throw errors("do3afa2:cgi_extension while index is missing.");
 	cgi_extension = cgi[0];
 }
 

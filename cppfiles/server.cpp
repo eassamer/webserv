@@ -6,7 +6,7 @@
 /*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:21:15 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/11 20:43:07 by aer-razk         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:13:10 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ int	server::check_request(std::string &buff)
 	if (buff == "\r\n")
 		return (buff.clear() ,0);
 	if (arr[0].length() > 1 && buff.find("GET") > buff.length() && buff.find("DELETE") > buff.length() && buff.find("POST") > buff.length())
-		return (400);
+		return (405);
 	for (int i = 0; i < arr.size();i++)
 	{
 		tmp = ft_split(arr[i],' ');
@@ -349,7 +349,7 @@ int	server::port_accessed(int fd)
 	}
 	if (j > 1)
 		uploadfiles(clients[fd].sbuffer);
-	std::cout << clients[fd].sbuffer << std::endl;
+	//std::cout << clients[fd].sbuffer << std::endl;
 	clients[fd].fill();
 	return (1);
 }
@@ -491,6 +491,19 @@ std::string server::read_text(std::string path)
 	while(getline(fn, buffer))
 		text += buffer;
 	return (text);
+}
+
+void	server::check_paths()
+{
+	int i = -1;
+	int j;
+	while (++i < locations.size())
+	{
+		j = i;
+		while (++j < locations.size())
+			if (locations[i].get_location_path() == locations[j].get_location_path())
+				throw errors("do3afa2:two locations has the same path.");
+	}
 }
 
 void server::get_page_autoindex(int c_fd, std::string path)

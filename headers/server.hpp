@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bboulhan <bboulhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aer-razk <aer-razk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 12:10:58 by aer-razk          #+#    #+#             */
-/*   Updated: 2022/12/09 12:16:52 by bboulhan         ###   ########.fr       */
+/*   Updated: 2022/12/12 12:05:34 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ class server {
 		std::vector<std::string>	checknsearch(std::string var);
 		bool						check_brackets(std::string config);
 		int							port_accessed(int fd);
+		void						check_paths();
 		std::string					search_file(std::string path);
 		void						get_page(int c_fd, std::string path, int status);
 		void 						get_page_cgi(int c_fd ,std::string path, location &local, client &client);
