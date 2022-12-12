@@ -567,6 +567,7 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 {
 	static int j = 0;
 	int i = -1;
+	std::cout << "| " << path_accessed << " |\n";
 	while (++i < allow_methods.size())
 		if (allow_methods[i] == method)
 			break ;
@@ -577,16 +578,17 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 			if (path_accessed.length() > 9 && path_accessed.substr(0, 9) == "/uploads/")
 			{
 				
+				std::cout << path_accessed.c_str() << std::endl;
 				if (!remove(("." + path_accessed).c_str()))
 					get_page(c_fd, get_error_page(202), 202);
 				else
 					get_page(c_fd, get_error_page(204), 204);
 			}
 			else
-				get_page(c_fd, get_error_page(409), 409);
+				get_page(c_fd, get_error_page(204), 204);
 		}
 		else
-		{	
+		{			
 			if (path_accessed == "/" || path_accessed == "")
 				get_page(c_fd, get_root() + "/" + get_index(), 200);
 			else
@@ -596,11 +598,11 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 					if (locations[i].get_location_path() == path_accessed)
 						break ;
 				if (i < locations.size()){
+					Autoindex pathh(locations[i].get_root(),path_accessed);
 					std::string str = locations[i].get_location_path();
-					if (locations[i].get_autoindex() == true && autoindex == true)
+					if (locations[i].get_autoindex() == true)
 					{
 						j++;
-						Autoindex pathh(locations[i].get_root());
 						get_page_autoindex(c_fd,pathh.getIndexPage());
 					}
 					else if (locations[i].get_cgi_extension().length() != 0)
@@ -612,11 +614,19 @@ void	server::manageports(int c_fd, std::string path_accessed, std::string method
 				{
 					if (j != 0)
 					{
-						Autoindex p("." + path_accessed);
-						if (p.get_checker() == true)
-							get_page(c_fd, get_error_page(404), 404);
-						else
-							get_page_autoindex(c_fd,p.getIndexPage());
+						i = -1;
+						while (++i < locations.size())
+							if (locations[i].get_autoindex() == true)
+								break ;
+						if (path_accessed.find(locations[i].get_location_path()) != std::string::npos)
+						{
+							std::string h = path_accessed.substr(locations[i].get_location_path().size(), path_accessed.size() - locations[i].get_location_path().size());
+							Autoindex p(locations[i].get_root() + h ,path_accessed);
+							if (p.get_checker() == true)
+								get_page(c_fd, locations[i].get_root() + h, 200);
+							else
+								get_page_autoindex(c_fd,p.getIndexPage());
+						}
 					}
 					else
 						get_page(c_fd, get_error_page(404), 404);

@@ -15,10 +15,11 @@ class Autoindex
         std::string     path_d;
         std::string     index;
         bool            checker;
+        std::string     path;
 
     public:
 
-        Autoindex(const std::string& path);
+        Autoindex(const std::string& path, std::string &o_path);
         ~Autoindex();
 
         std::string     getIndexPage() const;

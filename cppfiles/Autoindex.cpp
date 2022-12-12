@@ -1,9 +1,12 @@
 #include "../headers/Autoindex.hpp"
 
-Autoindex::Autoindex(const std::string &path) : path_d(""),
-												index("")
+Autoindex::Autoindex(const std::string &path,std::string &o_path) : path_d(""),
+												index(""),
+												path("")
 {
-	path_d += path;
+
+	this->path_d += path;
+	this->path += o_path;
 	generateIndexPage();
 }
 
@@ -26,7 +29,7 @@ std::string Autoindex::create_header()
 		</style>\n\
         <body>\n\
         	<h1>Index of " +
-			 path_d + "</h1>\n\
+			 path + "</h1>\n\
             <table style=\"width:100%\">\n\
 				<colgroup span=\"20\"></colgroup>\n\
 				<tr>\n\
@@ -48,7 +51,7 @@ std::string Autoindex::getFileLink(const unsigned char fileType, std::string fil
 {
 	std::string fileLink;
 
-	fileLink = "<a href=\"" + fileName;
+	fileLink = "<a href=\"" + path + "/" + fileName;
 	if (fileType == DT_DIR)
 		fileLink += "/";
 	if (fileType == DT_DIR)
